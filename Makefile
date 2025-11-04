@@ -18,7 +18,13 @@ $(TARGET): $(OBJECTS)
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
+test:
+	@echo "Tests not yet implemented"
+
+coverage:
+	@echo "Coverage not yet implemented"
+
 clean:
 	rm -f $(TARGET) $(OBJECTS) *.gcno *.gcda *.gcov
 
-.PHONY: all clean
+.PHONY: all test coverage clean

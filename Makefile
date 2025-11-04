@@ -7,7 +7,7 @@ INCLUDES = -Iinclude
 TARGET = csvlite
 
 # source files will be added (later)
-SOURCES = 
+SOURCES = src/main.c
 OBJECTS = $(SOURCES:.c=.o)
 
 all: $(TARGET)

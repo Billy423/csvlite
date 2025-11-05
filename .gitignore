@@ -1,0 +1,38 @@
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+csvlite
+*.exe
+
+# Coverage files
+*.gcda
+*.gcno
+*.gcov
+coverage.info
+coverage_html/
+
+# Test artifacts
+test_*.o
+test_*.exe
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+temp/
+tmp/
+
+# Build directories
+build/
+bin/
+obj/

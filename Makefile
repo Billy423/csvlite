@@ -6,8 +6,8 @@ INCLUDES = -Iinclude
 
 TARGET = csvlite
 
-# source files will be added (later)
-SOURCES = src/main.c
+# source files
+SOURCES = src/main.c src/vec.c
 OBJECTS = $(SOURCES:.c=.o)
 
 all: $(TARGET)
@@ -18,13 +18,26 @@ $(TARGET): $(OBJECTS)
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-test:
-	@echo "Tests not yet implemented"
+
+# Unit tests configuration
+UNIT_TEST_DIR = tests/unit
+
+# Build and run individual unit test (e.g. make test-vec)
+test-%: $(UNIT_TEST_DIR)/%_test.c
+	@echo "Building and running $* tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_$* $< src/$*.c
+	@./test_$*
+	@rm -f test_$*
+
+# Run all tests (test-vec for now)
+test: test-vec
 
 coverage:
 	@echo "Coverage not yet implemented"
 
 clean:
-	rm -f $(TARGET) $(OBJECTS) *.gcno *.gcda *.gcov
+	rm -f $(TARGET) $(OBJECTS)
+	rm -f test_* $(UNIT_TEST_DIR)/*.o
+	rm -f *.gcno *.gcda *.gcov *.exe
 
-.PHONY: all test coverage clean
+.PHONY: all test test-% coverage clean

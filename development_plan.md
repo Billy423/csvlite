@@ -103,7 +103,8 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 - `hmap.c/h` - Hash map implementation  
 - `main.c` - Application entry point and orchestration
 - `Makefile` - Build system
-- `where.c/h` - Advanced where clause evaluation (Increment 2 - logical operators)
+- `row.c/h` - Row data structure
+
 
 **Deliverables:**
 - Working vector and hash map data structures with unit tests
@@ -126,8 +127,10 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 
 **Module(s) owned:**
 - `csv.c/h` - CSV file reading and parsing
-- `row.c/h` - Row data structure
 - `cli.c/h` - Command-line argument parsing
+- `where.c/h` - Coloumn select (collaborating with Query team)
+- `main.c` - Application entry point and orchestration (collaborating with Lead)
+
 
 **Deliverables:**
 - Code that reads CSV files from disk or stdin
@@ -142,6 +145,7 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 - Integration with Lead's data structures
 - Integration with Query team's functions
 - Error handling coordination
+- Integrating main application orchestration with Lead
 
 ---
 

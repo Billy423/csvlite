@@ -1,5 +1,5 @@
-#include "vec.h"
-#include "row.h"
+#include "../../include/vec.h"
+#include "../../include/row.h"
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>

@@ -5,7 +5,7 @@
  * Used by Query team to store and access CSV row data.
  */
 
-#include "vec.h"
+#include "../include/vec.h"
 #include <stdlib.h>
 #include <string.h>
 

@@ -1,8 +1,24 @@
+
+/*
+ * Provides functions for selecting specific columns from a CSV dataset.
+ * This module parses a user’s --select argument and returns the list of column indices. 
+ * It can also build a new vector of rows that includes only those columns.
+ *
+ * AUTHOR: Nadeem Mohamed
+ * DATE: November 10, 2025
+ * VERSION: v0.0.1
+*/
+
 #include "../include/select.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+
+/*
+ * duplicates a string by allocating memory for it. 
+ * RETURN: Pointer to a new string or NULL if allocation fails
+ */
 static char *dupstr(const char *text){
     if(text == NULL){
         return NULL;
@@ -23,6 +39,10 @@ static char *dupstr(const char *text){
     return copy;
 }
 
+/*
+ * removes leading and trailing spaces, tabs, newline characters from a string
+ * RETURN: the modified string
+ */
 static char* trim(char *s){
     if(s == NULL){
         return s;
@@ -42,6 +62,10 @@ static char* trim(char *s){
 }
 
 
+/* 
+ * checks if a string contains only numeric characters (0–9).
+ * RETURN: 1 if numeric, 0 otherwise.
+ */
 static int is_number(const char *text){
     if(text == NULL || *text == '\0'){
         return 0;
@@ -57,7 +81,19 @@ static int is_number(const char *text){
     return 1;
 }
 
-
+/* 
+ * parses a comma-separated column list and converts it into
+ * an integer array of column indices.
+ *
+ * parameters:
+ *  - columns_spec: user string, e.g., "0,2,4" or "name,age"
+ *  - name_to_index: optional map of column names to indices
+ *  - total_cols: total number of columns in the dataset
+ *  - out_indices: pointer where parsed indices will be stored
+ *  - out_count: pointer where the number of indices is stored
+ *
+ * RETURN: 0 on success, -1 on failure.
+ */
 int select_parse_indices(const char *columns_spec, const HMap *name_to_index, int total_cols, int **out_indices, int *out_count){
     if(columns_spec == NULL || out_indices == NULL || out_count == NULL){
         return -1;
@@ -71,7 +107,7 @@ int select_parse_indices(const char *columns_spec, const HMap *name_to_index, in
     if(copy == NULL){
         return -1;
     }
-
+    // count how many columns based on commas
     int count = 1;
     int i =0;
     while(copy[i] != '\0'){
@@ -93,7 +129,7 @@ int select_parse_indices(const char *columns_spec, const HMap *name_to_index, in
         char *word = trim(token);
         int columnn_index = -1;
 
-        if(is_number(word)){
+        if(is_number(word)){ //numeric index
             columnn_index = atoi(word);
             if(total_cols >= 0 && columnn_index >= total_cols){
                 free(indices);
@@ -102,7 +138,7 @@ int select_parse_indices(const char *columns_spec, const HMap *name_to_index, in
             }
 
         }
-        else{
+        else{   //name lookup
             if(name_to_index == NULL){
                 free(indices);
                 free(copy);
@@ -128,6 +164,18 @@ int select_parse_indices(const char *columns_spec, const HMap *name_to_index, in
     return 0;
 }
 
+
+/* 
+ * builds a new Vec* of rows containing only the selected columns.
+ * similar to the SQL "SELECT column1, column2" operation.
+ *
+ * parameters:
+ *  - rows: vector of all rows in the dataset
+ *  - indices: array of column indices to include
+ *  - n_indices: number of selected columns
+ *
+ * RETURN: a new Vec* of projected rows, or NULL on error
+ */
 Vec *select_project_rows(const Vec *rows, const int *indices, int n_indices){
     if (rows == NULL || indices == NULL || n_indices <= 0){
         return NULL;

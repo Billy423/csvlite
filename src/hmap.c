@@ -6,7 +6,10 @@
  * Note:
  * - The capacity is fixed and does not change after initialization
  * - The resize feature is not implemented (given the scope of the project)
-
+ * 
+ * AUTHOR: Billy
+ * DATE: 2025-11-11
+ * VERSION: v0.0.1
  */
 
 #include "../include/hmap.h"
@@ -41,7 +44,16 @@ static size_t hash_code(const char *key, size_t capacity) {
     return hash % capacity;
 }
 
-// Initialize hash map
+/* 
+ * Creates a new hash map with the specified initial capacity
+ * The capacity determines the number of buckets in the hash table
+ * If capacity is 0, a default to 16
+ *
+ * parameters:
+ * - capacity: initial number of buckets (0 uses default of 16)
+ *
+ * RETURN: pointer to new HMap on success, NULL on allocation failure.
+ */
 HMap *hmap_new(size_t capacity) {
     if (capacity == 0) {
         capacity = 16;  // default minimum capacity
@@ -66,8 +78,19 @@ HMap *hmap_new(size_t capacity) {
     return map;
 }
 
-// Insert or update key-value pair (key is copied)
-// - returns previous value if key existed, NULL if new key
+/* 
+ * Inserts or updates a key-value pair in the hash map.
+ * The key string is copied internally, so the caller can free the original.
+ * If the key already exists, the value is updated and the previous value is returned.
+ *
+ * parameters:
+ * - map: hash map to insert into
+ * - key: string key (will be copied internally)
+ * - value: pointer value to associate with key
+ *
+ * RETURN: previous value if key existed (may be NULL), NULL if new key was inserted.
+ *         Returns NULL on error (map/key is NULL or allocation failed).
+ */
 void *hmap_put(HMap *map, const char *key, void *value) {
 
     if (map == NULL || key == NULL) return NULL;
@@ -107,8 +130,15 @@ void *hmap_put(HMap *map, const char *key, void *value) {
     return NULL;  // new key, no previous value
 }
 
-// Get value for key
-// - returns NULL if key not found
+/* 
+ * Retrieves the value associated with the given key.
+ *
+ * parameters:
+ * - map: hash map to search
+ * - key: string key to look up
+ *
+ * RETURN: value pointer if key exists, NULL if key not found or map/key is NULL.
+ */
 void *hmap_get(const HMap *map, const char *key) {
 
     if (map == NULL || key == NULL) return NULL;
@@ -135,15 +165,32 @@ void *hmap_get(const HMap *map, const char *key) {
     return NULL;  // key not found
 }
 
-// Get value for key, or return default if key not found
-// - returns value if key exists, default_value if not found
+/* 
+ * Retrieves the value associated with the given key, or returns a default value
+ * if the key is not found.
+ *
+ * parameters:
+ * - map: hash map to search
+ * - key: string key to look up
+ * - default_value: value to return if key is not found
+ *
+ * RETURN: value pointer if key exists, default_value if key not found or map/key is NULL.
+ */
 void *hmap_get_or_default(const HMap *map, const char *key, void *default_value) {
     void *value = hmap_get(map, key);
     return value != NULL ? value : default_value;
 }
 
-// Remove key-value pair
-// - returns removed value if key existed, NULL if key not found
+/* 
+ * Removes a key-value pair from the hash map.
+ * The key string is freed, but the value pointer is NOT freed (caller's responsibility).
+ *
+ * parameters:
+ * - map: hash map to remove from
+ * - key: string key to remove
+ *
+ * RETURN: value pointer if key existed (may be NULL), NULL if key not found or map/key is NULL.
+ */
 void *hmap_remove(HMap *map, const char *key) {
 
     if (map == NULL || key == NULL) return NULL;
@@ -177,12 +224,27 @@ void *hmap_remove(HMap *map, const char *key) {
     return NULL;  // key not found
 }
 
+/* 
+ * Returns the number of key-value pairs currently stored in the hash map.
+ *
+ * parameters:
+ * - map: hash map to query
+ *
+ * RETURN: number of entries in the map, 0 if map is NULL.
+ */
 size_t hmap_size(const HMap *map) {
     return map == NULL ? 0 : map->size;
 }
 
-// Free hash map
-// - does not free value pointers
+/* 
+ * Frees all resources associated with the hash map.
+ * All key strings are freed, but value pointers are NOT freed (caller's responsibility).
+ *
+ * parameters:
+ * - map: hash map to free (safe to pass NULL)
+ *
+ * RETURN: void (no return value).
+ */
 void hmap_free(HMap *map) {
 
     if (map == NULL) return;

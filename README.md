@@ -53,4 +53,13 @@ make clean    # Remove build artifacts
 
 ## Team Members
 
-*To be added*
+| Name | Student Number | GitHub ID | Role Title |
+|------|---------------|-----------|------------|
+| Billy Wu | 400559765 | [Billy423](https://github.com/Billy423) | Lead Developer |
+| Nikhil Ranjith | 400559699 | [nikranjith](https://github.com/nikranjith) | CLI/I/O Owner |
+| Nadeem Mohamed | 400562265 | [Nadeem-Mohamed-Mac](https://github.com/Nadeem-Mohamed-Mac) | Query Operations Team |
+| Vivek Patel | 400562156 | [VivekP-24](https://github.com/VivekP-24) | Query Operations Team |
+
+## Documentation
+
+- **[Development Plan](development_plan.md)** - Complete project planning document (Lab 9.2 deliverable)

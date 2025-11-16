@@ -7,7 +7,7 @@ INCLUDES = -Iinclude
 TARGET = csvlite
 
 # source files
-SOURCES = src/main.c src/row.c
+SOURCES = src/main.c src/row.c src/vec.c
 OBJECTS = $(SOURCES:.c=.o)
 
 all: $(TARGET)
@@ -29,8 +29,15 @@ test-%: $(UNIT_TEST_DIR)/%_test.c
 	@./test_$*
 	@rm -f test_$*
 
-# Run all tests (test-row for now)
-test: test-row
+# Special handling for vec which depends on row
+test-vec: $(UNIT_TEST_DIR)/vec_test.c
+	@echo "Building and running vec tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_vec $< src/vec.c src/row.c
+	@./test_vec
+	@rm -f test_vec
+
+# Run all tests
+test: test-row test-vec
 
 coverage:
 	@echo "Coverage not yet implemented"
@@ -40,4 +47,4 @@ clean:
 	rm -f test_* $(UNIT_TEST_DIR)/*.o
 	rm -f *.gcno *.gcda *.gcov *.exe
 
-.PHONY: all test test-% coverage clean
+.PHONY: all test test-vec test-% coverage clean

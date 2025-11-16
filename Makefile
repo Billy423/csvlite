@@ -7,28 +7,24 @@ INCLUDES = -Iinclude
 TARGET = csvlite
 
 # source files
-SOURCES = src/main.c src/row.c src/vec.c src/hmap.c
-
+SOURCES = src/main.c src/row.c src/vec.c src/hmap.c src/select.c
 OBJECTS = $(SOURCES:.c=.o)
-
-all: $(TARGET)
-
-$(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ 
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
 
 # Unit tests configuration
 UNIT_TEST_DIR = tests/unit
 
-# Build and run individual unit test (e.g. make test-vec)
-test-%: $(UNIT_TEST_DIR)/%_test.c
-	@echo "Building and running $* tests..."
-	@$(CC) $(CFLAGS) $(INCLUDES) -o test_$* $< src/$*.c
-	@./test_$*
-	@rm -f test_$*
+all: $(TARGET)
+
+# Main application
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
+
+# Object files
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+# Run all tests
+test: test-row test-vec test-hmap test-select
 
 # Special handling for vec which depends on row
 test-vec: $(UNIT_TEST_DIR)/vec_test.c
@@ -37,8 +33,19 @@ test-vec: $(UNIT_TEST_DIR)/vec_test.c
 	@./test_vec
 	@rm -f test_vec
 
-# Run all tests
-test: test-row test-vec test-hmap
+# Special handling for select which depends on row, vec, and hmap
+test-select: $(UNIT_TEST_DIR)/select_test.c
+	@echo "Building and running select tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_select $< src/select.c src/vec.c src/row.c src/hmap.c
+	@./test_select
+	@rm -f test_select
+ 
+# Build and run individual unit test (e.g. make test-vec)
+test-%: $(UNIT_TEST_DIR)/%_test.c
+	@echo "Building and running $* tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_$* $< src/$*.c
+	@./test_$*
+	@rm -f test_$*
 
 coverage:
 	@echo "Coverage not yet implemented"

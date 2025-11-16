@@ -12,16 +12,20 @@ typedef struct HMap HMap;
 HMap *hmap_new(size_t capacity);
 
 // Insert or update key-value pair (key is copied)
-// - returns 0 on success, -1 if failed
-int hmap_put(HMap *map, const char *key, void *value);
+// - returns previous value if key existed, NULL if new key
+void *hmap_put(HMap *map, const char *key, void *value);
 
 // Get value for key
 // - returns NULL if key not found
 void *hmap_get(const HMap *map, const char *key);
 
+// Get value for key, or return default if key not found
+// - returns value if key exists, default_value if not found
+void *hmap_get_or_default(const HMap *map, const char *key, void *default_value);
+
 // Remove key-value pair (does NOT free value)
-// - returns 0 on success, -1 if key not found
-int hmap_remove(HMap *map, const char *key);
+// - returns removed value if key existed, NULL if key not found
+void *hmap_remove(HMap *map, const char *key);
 
 // Get number of key-value pairs
 size_t hmap_size(const HMap *map);

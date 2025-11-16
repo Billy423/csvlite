@@ -26,13 +26,6 @@ $(TARGET): $(OBJECTS)
 # Run all tests
 test: test-row test-vec test-hmap test-select
 
-# Build and run individual unit test (e.g. make test-vec)
-test-%: $(UNIT_TEST_DIR)/%_test.c
-	@echo "Building and running $* tests..."
-	@$(CC) $(CFLAGS) $(INCLUDES) -o test_$* $< src/$*.c
-	@./test_$*
-	@rm -f test_$*
-
 # Special handling for vec which depends on row
 test-vec: $(UNIT_TEST_DIR)/vec_test.c
 	@echo "Building and running vec tests..."
@@ -46,6 +39,13 @@ test-select: $(UNIT_TEST_DIR)/select_test.c
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_select $< src/select.c src/vec.c src/row.c src/hmap.c
 	@./test_select
 	@rm -f test_select
+ 
+# Build and run individual unit test (e.g. make test-vec)
+test-%: $(UNIT_TEST_DIR)/%_test.c
+	@echo "Building and running $* tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_$* $< src/$*.c
+	@./test_$*
+	@rm -f test_$*
 
 coverage:
 	@echo "Coverage not yet implemented"
@@ -55,4 +55,4 @@ clean:
 	rm -f test_* $(UNIT_TEST_DIR)/*.o
 	rm -f *.gcno *.gcda *.gcov *.exe
 
-.PHONY: all test test-vec test-select test-% coverage clean
+.PHONY: all test test-vec test-% coverage clean

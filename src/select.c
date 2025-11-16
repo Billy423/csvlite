@@ -95,7 +95,7 @@ static int is_number(const char *text){
  * RETURN: 0 on success, -1 on failure.
  */
 int select_parse_indices(const char *columns_spec, const HMap *name_to_index, int total_cols, int **out_indices, int *out_count){
-    if(columns_spec == NULL || out_indices == NULL || out_count == NULL){
+    if (columns_spec == NULL || out_indices == NULL || out_count == NULL) {
         return -1;
     }
 
@@ -103,58 +103,59 @@ int select_parse_indices(const char *columns_spec, const HMap *name_to_index, in
     *out_count = 0;
 
     char *copy = dupstr(columns_spec);
-
-    if(copy == NULL){
+    if (copy == NULL) {
         return -1;
     }
+
     // count how many columns based on commas
     int count = 1;
-    int i =0;
-    while(copy[i] != '\0'){
-        if(copy[i] == ','){
-            count++;
-        }
-        i++;
+    for (int i = 0; copy[i] != '\0'; i++) {
+        if (copy[i] == ',') count++;
     }
 
     int *indices = malloc(sizeof(int) * count);
-    if(indices == NULL){
+    if (indices == NULL) {
         free(copy);
         return -1;
     }
 
-    int n =0;
+    int n = 0;
     char *token = strtok(copy, ",");
-    while(token != NULL){
+    while (token != NULL) {
         char *word = trim(token);
         int columnn_index = -1;
 
-        if(is_number(word)){ //numeric index
+        if (is_number(word)) { // numeric index
             columnn_index = atoi(word);
-            if(total_cols >= 0 && columnn_index >= total_cols){
+            if (total_cols >= 0 && columnn_index >= total_cols) {
                 free(indices);
                 free(copy);
                 return -1;
             }
-
-        }
-        else{   //name lookup
-            if(name_to_index == NULL){
+        } else { // name lookup
+            if (name_to_index == NULL) {
                 free(indices);
                 free(copy);
                 return -1;
             }
 
             void *value = hmap_get(name_to_index, word);
-            if(value == NULL){
+            if (value == NULL) {
                 free(indices);
                 free(copy);
                 return -1;
             }
-            columnn_index = (int)(long)value;
+
+            /* === CHANGE: decode (index+1) back to index === */
+            columnn_index = (int)((long)value - 1);
+            if (total_cols >= 0 && columnn_index < 0) {
+                free(indices);
+                free(copy);
+                return -1;
+            }
         }
-        indices[n] = columnn_index;
-        n++;
+
+        indices[n++] = columnn_index;
         token = strtok(NULL, ",");
     }
 

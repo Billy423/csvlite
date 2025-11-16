@@ -7,7 +7,8 @@ INCLUDES = -Iinclude
 TARGET = csvlite
 
 # source files
-SOURCES = src/main.c src/row.c src/vec.c
+SOURCES = src/main.c src/row.c src/vec.c src/hmap.c
+
 OBJECTS = $(SOURCES:.c=.o)
 
 all: $(TARGET)
@@ -37,7 +38,7 @@ test-vec: $(UNIT_TEST_DIR)/vec_test.c
 	@rm -f test_vec
 
 # Run all tests
-test: test-row test-vec
+test: test-row test-vec test-hmap
 
 coverage:
 	@echo "Coverage not yet implemented"

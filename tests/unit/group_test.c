@@ -15,6 +15,9 @@
  * Verifies that grouping by the first column produces unique groups.
  * Prints success message to stdout on test pass.
  *
+ * PARAMS:
+ * None
+ * 
  * RETURNS:
  *  None
  */
@@ -30,6 +33,10 @@ void test_group_by_column_unique() {
     assert(vec_length(grouped) == 2);
 
     printf("group_by_column(): produced 2 unique groups successfully\n");
+
+    // Cleans only the vec containers
+    vec_free(grouped);
+    vec_free(rows);
 }
 
 /* Entry point for the test program.
@@ -41,5 +48,6 @@ void test_group_by_column_unique() {
  */
 int main() {
     test_group_by_column_unique();
+    printf("group_test: PASS\n");
     return EXIT_SUCCESS;
 }

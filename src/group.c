@@ -26,28 +26,50 @@
  *  A new Vec* containing one representative Row* per unique group.
  *  Returns NULL if an invalid argument or allocation failure occurs.
  */
-Vec* group_by_column(Vec* rows, int col_index) {
-    if (!rows || col_index < 0) return NULL;
+Vec* group_by_column(Vec* rows, int col_index)
+{
+    if (!rows || col_index < 0) {
+        return NULL;
+    }
 
+    // Vec to hold the grouped rep. rows
     Vec* grouped = vec_new(10);
-    if (!grouped) return NULL;
+    if (!grouped) {
+        return NULL;
+    }
 
+    // Hash map to track which keys have already been seen
     HMap* seen = hmap_new(64);
-    if (!seen) return NULL;
+    if (!seen) {
+        vec_free(grouped);
+        return NULL;
+    }
 
+    // Iterate through all rows
     for (size_t i = 0; i < vec_length(rows); i++) {
         Row* row = vec_get(rows, i);
-        // provided by row.c
-        const char* key = row_get_cell(row, col_index); 
+        if (!row) {
+            // skip invalid rows
+            continue;
+        }
 
+        // Retrieve column cell (provided by row.c)
+        const char* key = row_get_cell(row, col_index);
+        if (!key) {
+            // skip invalid cells
+            continue;  
+        }
+
+        // If this key was NOT seen before then record it
         if (!hmap_contains(seen, key)) {
-            // first occurrence of this key, store representative row
             hmap_put(seen, key, row);
             vec_push(grouped, row);
         }
     }
 
+    // Clean up hash map
     hmap_free(seen);
+
     return grouped;
 }
 

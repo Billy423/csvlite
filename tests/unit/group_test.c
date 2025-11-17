@@ -9,6 +9,7 @@
 #include "row.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /* Tests whether group_by_column() correctly reduces duplicate entries.
  * Verifies that grouping by the first column produces unique groups.

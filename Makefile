@@ -35,14 +35,14 @@ test-vec: $(UNIT_TEST_DIR)/vec_test.c
 # Test csv
 test-csv: $(UNIT_TEST_DIR)/csv_test.c
 	@echo "Building and running csv tests..."
-	@$(CC) $(CFLAGS) -o test_csv $< src/csv.c src/row.c src/vec.c src/hmap.c
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_csv $< src/csv.c src/row.c src/vec.c src/hmap.c
 	@./test_csv
 	@rm -f test_csv
 
 # Test cli
 test-cli: $(UNIT_TEST_DIR)/cli_test.c
 	@echo "Building and running cli tests..."
-	@$(CC) $(CFLAGS) -o test_cli $< src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_cli $< src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c
 	@./test_cli
 	@rm -f test_cli
 

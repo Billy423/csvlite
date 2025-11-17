@@ -237,7 +237,10 @@ int csv_write(FILE* output, Vec* rows, const char* selected_cols) {
     /* parse selection into indices */
     int *indices = NULL;
     int nsel = parse_selected_indices(header, selected_cols, &indices);
-    if (nsel <= 0) return -1;
+    if (nsel <= 0) {
+        free(indices);  // free if allocated but no valid indices found
+        return -1;
+    }
 
     for (size_t r = 0; r < vec_length(rows); ++r) {
         Row *row = vec_get(rows, r);

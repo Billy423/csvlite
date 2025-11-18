@@ -5,7 +5,7 @@ INCLUDES = -Iinclude
 TARGET = csvlite
 
 # Source files
-SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c 
+SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c src/where.c
 OBJECTS = $(SOURCES:.c=.o)
 TEST_SRC = tests/unit/vec_test.c tests/unit/csv_test.c
 
@@ -23,7 +23,8 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Run all tests
-test: test-row test-vec test-hmap test-csv test-cli test-select
+test: test-row test-vec test-hmap test-csv test-cli test-select test-where
+
 
 # Special handling for vec which depends on row
 test-vec: $(UNIT_TEST_DIR)/vec_test.c
@@ -54,6 +55,16 @@ test-select: $(UNIT_TEST_DIR)/select_test.c
 	@./test_select
 	@rm -f test_select
  
+
+# Special handling for where which depends on row and vec
+test-where: $(UNIT_TEST_DIR)/where_test.c
+	@echo "Building and running where tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_where $< src/where.c src/vec.c src/row.c
+	@./test_where
+	@rm -f test_where
+
+
+
 # Build and run individual unit test (e.g. make test-vec)
 test-%: $(UNIT_TEST_DIR)/%_test.c
 	@echo "Building and running $* tests..."

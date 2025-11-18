@@ -3,6 +3,10 @@
  * 
  * Provides a resizable array that automatically grows when full.
  * Used by Query team to store and access CSV row data.
+ * 
+ * AUTHOR: Billy
+ * DATE: 2025-11-11
+ * VERSION: v0.0.2
  */
 
 #include "../include/vec.h"
@@ -16,8 +20,15 @@ struct Vec {
     size_t capacity;  // maximum capacity before auto-resize
 };
 
-// Initialize a new vector with the given capacity
-// Returns a pointer to the new vector, or NULL if allocation fails
+/* 
+ * Creates a new vector with the specified initial capacity.
+ * The vector will automatically resize when full.
+ *
+ * parameters:
+ * - capacity: initial capacity (minimum 1, will be set to 1 if 0)
+ *
+ * RETURN: pointer to new Vec on success, NULL on allocation failure
+ */
 Vec *vec_new(size_t capacity) {
 
     if (capacity == 0) {
@@ -42,18 +53,57 @@ Vec *vec_new(size_t capacity) {
     return vec;
 }
 
-// Get number of items stored (returns 0 if vec is NULL)
+/* 
+ * Gets the number of items currently stored in the vector.
+ *
+ * parameters:
+ * - vec: vector to query
+ *
+ * RETURN: number of items in vector, 0 if vec is NULL
+ */
 size_t vec_length(const Vec *vec) {
     return vec == NULL ? 0 : vec->length;
 }
 
-// Get current capacity (returns 0 if vec is NULL)
+/* 
+ * Gets the current capacity of the vector (maximum items before resize).
+ *
+ * parameters:
+ * - vec: vector to query
+ *
+ * RETURN: current capacity, 0 if vec is NULL
+ */
 size_t vec_capacity(const Vec *vec) {
     return vec == NULL ? 0 : vec->capacity;
 }
 
-// Get Row at index 
-// Returns NULL if invalid index or vec is NULL
+/* 
+ * Gets a pointer to the internal array of Row pointers.
+ * This is provided for advanced operations like sorting that require
+ * direct array access for performance.
+ * 
+ * WARNING: The caller must not modify the array size directly.
+ * Only use vec_push() to add items and vec_free() to deallocate.
+ * Modifying the array contents (swapping pointers) is allowed.
+ *
+ * parameters:
+ * - vec: vector to get array pointer from
+ *
+ * RETURN: pointer to internal Row* array on success, NULL if vec is NULL
+ */
+Row **vec_get_data(Vec *vec) {
+    return vec == NULL ? NULL : vec->items;
+}
+
+/* 
+ * Gets the Row pointer at the specified index.
+ *
+ * parameters:
+ * - vec: vector to get item from
+ * - index: 0-based index of the item to retrieve
+ *
+ * RETURN: pointer to Row at index on success, NULL if vec is NULL or index is out of bounds
+ */
 Row *vec_get(const Vec *vec, size_t index) {
     if (vec == NULL || index >= vec->length) {
         return NULL;
@@ -61,8 +111,15 @@ Row *vec_get(const Vec *vec, size_t index) {
     return vec->items[index];
 }
 
-// Internal helper: doubles capacity when vector is full
-// Returns 0 on success, -1 on failure
+/* 
+ * Internal helper: doubles the vector's capacity when it is full.
+ * This is called automatically by vec_push() when needed.
+ *
+ * parameters:
+ * - vec: vector to resize
+ *
+ * RETURN: 0 on success, -1 on failure (vec is NULL or realloc failed)
+ */
 static int vec_resize(Vec *vec) {
     if (vec == NULL) {
         return -1;
@@ -83,8 +140,16 @@ static int vec_resize(Vec *vec) {
     return 0;
 }
 
-// Add Row to end of vector (auto-resizes if full)
-// Returns 0 on success, -1 on failure
+/* 
+ * Adds a Row pointer to the end of the vector.
+ * The vector will automatically resize if it is full.
+ *
+ * parameters:
+ * - vec: vector to add item to
+ * - item: Row pointer to add (must not be NULL)
+ *
+ * RETURN: 0 on success, -1 on failure (vec/item is NULL or resize failed)
+ */
 int vec_push(Vec *vec, Row *item) {
     if (vec == NULL || item == NULL) {
         return -1;
@@ -100,7 +165,16 @@ int vec_push(Vec *vec, Row *item) {
     return 0;
 }
 
-// Free vector structure
+/* 
+ * Frees the vector structure and its internal array.
+ * Does NOT free the Row objects stored in the vector.
+ * The caller is responsible for freeing Row objects separately.
+ *
+ * parameters:
+ * - vec: vector to free (safe to call with NULL)
+ *
+ * RETURN: none
+ */
 void vec_free(Vec *vec) {
     if (vec == NULL) return;
     

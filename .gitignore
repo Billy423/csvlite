@@ -36,3 +36,5 @@ tmp/
 build/
 bin/
 obj/
+
+secrets/

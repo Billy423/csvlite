@@ -43,8 +43,52 @@ void test_vec_zero_capacity(void) {
     printf("Test 2: vec_zero_capacity() - Complete\n\n");
 }
 
-// Test 3: Push validation (NULL checks only)
-// Note: Full push/get testing will be done when Row is implemented
+// Test 3.1: Push and get with Row objects
+void test_vec_push_and_get(void) {
+    Vec *vec = vec_new(2);
+    TEST(vec != NULL, "vec_new() succeeds", "vec_new() fails");
+    
+    // create new rows
+    Row *row1 = row_new(2);
+    Row *row2 = row_new(2);
+    TEST(row1 != NULL && row2 != NULL, "row_new() succeeds", "row_new() fails");
+    
+    // set row dummy values
+    row_set_cell(row1, 0, "value1");
+    row_set_cell(row1, 1, "value2");
+    row_set_cell(row2, 0, "value3");
+    row_set_cell(row2, 1, "value4");
+    
+    // push rows to vector
+    TEST(vec_push(vec, row1) == 0, "vec_push() succeeds", "vec_push() fails");
+    TEST(vec_length(vec) == 1, "Length is 1 after first push", "Length is != 1");
+    
+    TEST(vec_push(vec, row2) == 0, "vec_push() succeeds", "vec_push() fails");
+    TEST(vec_length(vec) == 2, "Length is 2 after second push", "Length is != 2");
+    
+    // Get rows back
+    Row *get1 = vec_get(vec, 0);
+    TEST(get1 == row1, "vec_get() returns correct row", "vec_get() returns incorrect row");
+    TEST(strcmp(row_get_cell(get1, 0), "value1") == 0,
+        "Retrieved row has correct cell value",
+        "Retrieved row has incorrect cell value"
+    );
+    
+    Row *get2 = vec_get(vec, 1);
+    TEST(get2 == row2, "vec_get() returns correct row", "vec_get() returns incorrect row");
+    TEST(strcmp(row_get_cell(get2, 0), "value3") == 0,
+        "Retrieved row has correct cell value",
+        "Retrieved row has incorrect cell value"
+    );
+    
+    // free rows and vector
+    row_free(row1);
+    row_free(row2);
+    vec_free(vec);
+    printf("Test 3: vec_push() and vec_get() with Row objects - Complete\n\n");
+}
+
+// Test 3.2: Push validation (NULL checks)
 void test_vec_push_validation(void) {
     Vec *vec = vec_new(2);
     TEST(vec != NULL, "vec_new() succeeds", "vec_new() fails");
@@ -55,11 +99,13 @@ void test_vec_push_validation(void) {
     TEST(vec_length(vec) == 0, "Length remains 0 after failed push", "Length changed after failed push");
     
     // Test pushing to NULL vector (should fail)
-    result = vec_push(NULL, (Row *)0x1000);
+    Row *row = row_new(1);
+    result = vec_push(NULL, row);
     TEST(result == -1, "vec_push() with NULL vector returns -1", "vec_push() with NULL vector returns != -1");
     
+    row_free(row);
     vec_free(vec);
-    printf("Test 3: vec_push() validation - Complete\n\n");
+    printf("Test 3b: vec_push() validation - Complete\n\n");
 }
 
 // Test 4: Edge cases and NULL handling
@@ -74,8 +120,14 @@ void test_vec_edge_cases(void) {
     TEST(vec != NULL, "vec_new() succeeds", "vec_new() fails");
     
     // Test invalid index on empty vector
-    TEST(vec_get(vec, 0) == NULL, "vec_get() on empty vector returns NULL", "vec_get() on empty vector returns != NULL");
-    TEST(vec_get(vec, 100) == NULL, "vec_get() with invalid index returns NULL", "vec_get() with invalid index returns != NULL");
+    TEST(vec_get(vec, 0) == NULL,
+        "vec_get() on empty vector returns NULL",
+        "vec_get() on empty vector returns != NULL"
+    );
+    TEST(vec_get(vec, 100) == NULL,
+        "vec_get() with invalid index returns NULL",
+        "vec_get() with invalid index returns != NULL"
+    );
     
     vec_free(vec);
     printf("Test 4: Edge cases - Complete\n\n");
@@ -102,14 +154,74 @@ void test_vec_different_capacities(void) {
     printf("Test 5: Different capacities - Complete\n\n");
 }
 
+// Test 6: Auto-resize when capacity is full
+void test_vec_auto_resize(void) {
+    Vec *vec = vec_new(2);
+    TEST(vec != NULL, "vec_new() succeeds", "vec_new() fails");
+    TEST(vec_capacity(vec) == 2, "Initial capacity is 2", "Initial capacity is != 2");
+    
+    // push more than capacity to trigger resize
+    size_t num_rows = 5;
+    Row *rows[num_rows];
+    for (size_t i = 0; i < num_rows; i++) {
+        rows[i] = row_new(1);
+        row_set_cell(rows[i], 0, "test");
+        TEST(vec_push(vec, rows[i]) == 0, "vec_push() succeeds", "vec_push() fails");
+    }
+    
+    TEST(vec_length(vec) == num_rows, "Length is num_rows after num_rows pushes", "Length is != num_rows");
+    TEST(vec_capacity(vec) >= num_rows, "Capacity increased after resize", "Capacity did not increase");
+    
+    // Verify all rows are still accessible
+    for (size_t i = 0; i < num_rows; i++) {
+        Row *get = vec_get(vec, i);
+        TEST(get == rows[i], "vec_get() returns correct row after resize",
+             "vec_get() returns incorrect row after resize");
+    }
+    
+    // free rows and vector
+    for (size_t i = 0; i < num_rows; i++) {
+        row_free(rows[i]);
+    }
+    vec_free(vec);
+    printf("Test 6: vec_auto_resize() - Complete\n\n");
+}
+
+// Test 7: Get data pointer (new function)
+void test_vec_get_data(void) {
+    Vec *vec = vec_new(5);
+    TEST(vec != NULL, "vec_new() succeeds", "vec_new() fails");
+    
+    Row **data = vec_get_data(vec);
+    TEST(data != NULL, "vec_get_data() returns non-NULL", "vec_get_data() returns NULL");
+    
+    Row *row = row_new(1);
+    row_set_cell(row, 0, "test");
+    vec_push(vec, row);
+    
+    // verify data pointer points to same array
+    Row **data2 = vec_get_data(vec);
+    TEST(data == data2, "vec_get_data() returns consistent pointer", "vec_get_data() returns different pointer");
+    TEST(data[0] == row, "Data pointer points to correct row", "Data pointer points to incorrect row");
+    
+    TEST(vec_get_data(NULL) == NULL, "vec_get_data(NULL) returns NULL", "vec_get_data(NULL) returns != NULL");
+    
+    row_free(row);
+    vec_free(vec);
+    printf("Test 7: vec_get_data() - Complete\n\n");
+}
+
 int main(void) {
     printf("=== Vec Unit Tests ===\n\n");
     
     test_vec_new_and_free();
     test_vec_zero_capacity();
+    test_vec_push_and_get();
     test_vec_push_validation();
     test_vec_edge_cases();
     test_vec_different_capacities();
+    test_vec_auto_resize();
+    test_vec_get_data();
     
     printf("=== Test Summary ===\n");
     printf("Tests run: %d\n", tests_run);
@@ -118,4 +230,3 @@ int main(void) {
     
     return (tests_run == tests_passed) ? 0 : 1;
 }
-

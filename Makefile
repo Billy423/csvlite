@@ -1,77 +1,72 @@
-# Makefile for CSVlite (extended with a parser demo)
+CC = gcc
+CFLAGS = -std=c11 -Wall -Wextra -Werror
+INCLUDES = -Iinclude
 
-CC        := gcc
-CFLAGS    := -std=c11 -Wall -Wextra -Werror
-INCLUDES  := -Iinclude
+TARGET = csvlite
 
-# App target (keep as-is for later)
-TARGET    := csvlite
-SOURCES   := src/main.c            # add more later: src/csv.c src/cli.c ...
-OBJECTS   := $(SOURCES:.c=.o)
+# Source files
+SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c 
+OBJECTS = $(SOURCES:.c=.o)
+TEST_SRC = tests/unit/vec_test.c tests/unit/csv_test.c
 
-# Demo build dirs
-BUILD_DIR := build
-BIN_DIR   := bin
+# Unit tests configuration
+UNIT_TEST_DIR = tests/unit
 
-# -------------------------
-# Default: do nothing heavy
-# -------------------------
-.PHONY: all
-all: help
+all: $(TARGET)
 
-.PHONY: help
-help:
-	@echo "Useful targets:"
-	@echo "  make parse-demo       # build the select_parse_demo"
-	@echo "  make run-parse        # build + run the demo"
-	@echo "  make $(TARGET)        # build app (when main + deps are ready)"
-	@echo "  make clean            # remove build/bin and objects"
-
-# -------------------------
-# csvlite app (later)
-# -------------------------
+# Main application
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
 
+# Object files
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-# -------------------------
-# Parser demo (works now)
-# -------------------------
-# ensure dirs exist
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+# Run all tests
+test: test-row test-vec test-hmap test-csv test-cli test-select
 
-$(BIN_DIR):
-	mkdir -p $(BIN_DIR)
+# Special handling for vec which depends on row
+test-vec: $(UNIT_TEST_DIR)/vec_test.c
+	@echo "Building and running vec tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_vec $< src/vec.c src/row.c
+	@./test_vec
+	@rm -f test_vec
 
-# compile select.c to an object (only the parser will be used in the demo)
-$(BUILD_DIR)/select.o: src/select.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+# Test csv
+test-csv: $(UNIT_TEST_DIR)/csv_test.c
+	@echo "Building and running csv tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_csv $< src/csv.c src/row.c src/vec.c src/hmap.c
+	@./test_csv
+	@rm -f test_csv
 
-# link the demo
-$(BIN_DIR)/select_parse_demo: $(BUILD_DIR)/select.o tests/unit/select_parse_demo.c | $(BIN_DIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $^ -o $@
+# Test cli
+test-cli: $(UNIT_TEST_DIR)/cli_test.c
+	@echo "Building and running cli tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_cli $< src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c
+	@./test_cli
+	@rm -f test_cli
 
-.PHONY: parse-demo
-parse-demo: $(BIN_DIR)/select_parse_demo
 
-.PHONY: run-parse
-run-parse: parse-demo
-	./$(BIN_DIR)/select_parse_demo
+# Special handling for select which depends on row, vec, and hmap
+test-select: $(UNIT_TEST_DIR)/select_test.c
+	@echo "Building and running select tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_select $< src/select.c src/vec.c src/row.c src/hmap.c
+	@./test_select
+	@rm -f test_select
+ 
+# Build and run individual unit test (e.g. make test-vec)
+test-%: $(UNIT_TEST_DIR)/%_test.c
+	@echo "Building and running $* tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_$* $< src/$*.c
+	@./test_$*
+	@rm -f test_$*
 
-# -------------------------
-# Stubs you already had
-# -------------------------
-.PHONY: test
-test:
-	@echo "Tests not yet implemented"
-
-.PHONY: coverage
 coverage:
 	@echo "Coverage not yet implemented"
 
-.PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR) $(BIN_DIR) $(TARGET) $(OBJECTS) *.gcno *.gcda *.gcov
+	rm -f $(TARGET) $(OBJECTS)
+	rm -f test_* $(UNIT_TEST_DIR)/*.o src/*.o
+	rm -f *.gcno *.gcda *.gcov *.exe
+
+.PHONY: all test test-vec test-% coverage clean

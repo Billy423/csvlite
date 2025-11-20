@@ -53,6 +53,13 @@ test-select: $(UNIT_TEST_DIR)/select_test.c
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_select $< src/select.c src/vec.c src/row.c src/hmap.c
 	@./test_select
 	@rm -f test_select
+
+# Test group 
+test-group: $(UNIT_TEST_DIR)/group_test.c
+	@echo "Building and running group tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_group $< src/group.c src/row.c src/vec.c src/hmap.c
+	@./test_group
+	@rm -f test_group
  
 # Build and run individual unit test (e.g. make test-vec)
 test-%: $(UNIT_TEST_DIR)/%_test.c

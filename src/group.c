@@ -3,7 +3,7 @@
  * the Lead Developer’s hash map (hmap) to track unique column values
  * and returns a vector containing one representative row per group.
  *
- * Vivek Patel, November 11, 2025, v1.0.0
+ * Vivek Patel, November 11, 2025, v0.0.2
  */
 
 #include "group.h"
@@ -13,6 +13,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+
+/* Helper, frees all Row* inside a Vec*, then frees the Vec itself.
+ * Used for cleanup on failure inside group_by_column().
+ */
+static void free_group_results(Vec *grouped) {
+    if (!grouped) return;
+    for (size_t i = 0; i < vec_length(grouped); i++) {
+        Row *r = vec_get(grouped, i);
+        row_free(r);
+    }
+    vec_free(grouped);
+}
 
 /* Groups rows by a specific column index. Each unique column value
  * (from the specified index) is stored in a hash map, ensuring that
@@ -25,64 +38,58 @@
  * RETURNS:
  *  A new Vec* containing one representative Row* per unique group.
  *  Returns NULL if an invalid argument or allocation failure occurs.
+ * 
+ * For each unique group key, this function returns the FIRST row encountered.
  */
 Vec* group_by_column(Vec* rows, int col_index)
 {
-    if (!rows || col_index < 0) {
+    
+    // Validate input rows and column index
+    if (!rows ||
+        vec_length(rows) == 0 ||
+        col_index < 0 ||
+        col_index >= row_num_cells(vec_get(rows, 0))) {
         return NULL;
     }
 
-    // Vec to hold the grouped rep. rows
-    Vec* grouped = vec_new(10);
+    size_t n = vec_length(rows);
+
+    // Hash map tracks which keys we've seen
+    HMap *seen = hmap_new(16);
+    if (!seen) return NULL;
+
+    // Output vector
+    Vec *grouped = vec_new(8);
     if (!grouped) {
-        return NULL;
-    }
-
-    // Hash map to track which keys have already been seen
-    HMap* seen = hmap_new(64);
-    if (!seen) {
-        vec_free(grouped);
+        hmap_free(seen);
         return NULL;
     }
 
     // Iterate through all rows
-    for (size_t i = 0; i < vec_length(rows); i++) {
-        Row* row = vec_get(rows, i);
-        if (!row) {
-            // skip invalid rows
-            continue;
-        }
+    for (size_t i = 0; i < n; i++) {
+        Row *row = vec_get(rows, i);
+        const char *key = row_get_cell(row, col_index);
+        if (!key) key = "";
 
-        // Retrieve column cell (provided by row.c)
-        const char* key = row_get_cell(row, col_index);
-        if (!key) {
-            // skip invalid cells
-            continue;  
-        }
+        // If key not yet recorded → new group
+        if (hmap_get(seen, key) == NULL) {
 
-        // If this key was NOT seen before then record it
-        if (!hmap_contains(seen, key)) {
-            hmap_put(seen, key, row);
-            vec_push(grouped, row);
+            // Insert into hashmap
+            if (hmap_put(seen, key, row) != 0) {
+                free_group_results(grouped);
+                hmap_free(seen);
+                return NULL;
+            }
+
+            // Add to result vector
+            if (vec_push(grouped, row) != 0) {
+                free_group_results(grouped);
+                hmap_free(seen);
+                return NULL;
+            }
         }
     }
 
-    // Clean up hash map
     hmap_free(seen);
-
     return grouped;
-}
-
-/* Placeholder for aggregation functions (e.g., count, sum, average).
- * Currently unimplemented — to be added in Increment 2.
- *
- * PARAMETERS:
- *  grouped_rows - a Vec* containing grouped Row* entries
- *
- * RETURNS:
- *  None
- */
-void group_aggregate(Vec* grouped_rows) {
-    // suppress unused variable warning
-    (void)grouped_rows;
 }

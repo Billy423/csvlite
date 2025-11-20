@@ -39,6 +39,15 @@ test-select: $(UNIT_TEST_DIR)/select_test.c
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_select $< src/select.c src/vec.c src/row.c src/hmap.c
 	@./test_select
 	@rm -f test_select
+
+# Test sort
+test-sort: tests/unit/sort_test.c
+	@echo "Building and running sort tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_sort \
+	    tests/unit/sort_test.c \
+	    src/sort.c src/vec.c src/row.c src/hmap.c
+	@./test_sort
+	@rm -f test_sort
  
 # Build and run individual unit test (e.g. make test-vec)
 test-%: $(UNIT_TEST_DIR)/%_test.c

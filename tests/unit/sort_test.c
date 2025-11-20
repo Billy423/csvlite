@@ -1,11 +1,3 @@
-/* Unit tests for sort.c
- * Tests basic single-column sorting using the sort_rows() function.
- * Ensures that rows are sorted correctly in ascending order based
- * on the specified column index.
- *
- * Vivek Patel, November 17, 2025, v0.0.2
- */
-
 #include "../../include/sort.h"
 #include "../../include/vec.h"
 #include "../../include/row.h"
@@ -44,24 +36,25 @@ void test_sort_numeric_column(void) {
     vec_push(rows, make_row("Carol", "88"));
     vec_push(rows, make_row("Dave", "75"));
 
-    sort_by_column(rows, 1);
+    Vec *sorted = sort_by_column(rows, 1);
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 0), 0), "Dave") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 0), 0), "Dave") == 0,
          "Numeric sort: row 0 correct",
          "Numeric sort: row 0 wrong");
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 1), 0), "Bob") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 1), 0), "Bob") == 0,
          "Numeric sort: row 1 correct",
          "Numeric sort: row 1 wrong");
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 2), 0), "Carol") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 2), 0), "Carol") == 0,
          "Numeric sort: row 2 correct",
          "Numeric sort: row 2 wrong");
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 3), 0), "Alice") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 3), 0), "Alice") == 0,
          "Numeric sort: row 3 correct",
          "Numeric sort: row 3 wrong");
 
+    vec_free(sorted);
     vec_free(rows);
     printf("Test 1 complete\n\n");
 }
@@ -74,35 +67,36 @@ void test_sort_text_column(void) {
     vec_push(rows, make_row("Bob", "2"));
     vec_push(rows, make_row("David", "4"));
 
-    sort_by_column(rows, 0);
+    Vec *sorted = sort_by_column(rows, 0);
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 0), 0), "Alice") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 0), 0), "Alice") == 0,
          "Text sort: row 0 correct",
          "Text sort: row 0 wrong");
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 1), 0), "Bob") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 1), 0), "Bob") == 0,
          "Text sort: row 1 correct",
          "Text sort: row 1 wrong");
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 2), 0), "Charlie") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 2), 0), "Charlie") == 0,
          "Text sort: row 2 correct",
          "Text sort: row 2 wrong");
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 3), 0), "David") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 3), 0), "David") == 0,
          "Text sort: row 3 correct",
          "Text sort: row 3 wrong");
 
+    vec_free(sorted);
     vec_free(rows);
     printf("Test 2 complete\n\n");
 }
 
-//  Test 3: Empty vector should return empty vector
+//  Test 3: Empty vector should return NULL
 void test_sort_empty_vector(void) {
-Vec *rows = vec_new(0);
+    Vec *rows = vec_new(0);
 
-    int result = sort_by_column(rows, 0);
+    Vec *sorted = sort_by_column(rows, 0);
 
-    TEST(result == 0, "Empty vector: OK", "Empty vector: returned error");
+    TEST(sorted == NULL, "Empty vector: OK", "Empty vector: returned non-NULL");
 
     vec_free(rows);
     printf("Test 3 complete\n\n");
@@ -110,9 +104,9 @@ Vec *rows = vec_new(0);
 
 //  Test 4: NULL input should return NULL
 void test_sort_null_input(void) {
-    int result = sort_by_column(NULL, 0);
+    Vec *sorted = sort_by_column(NULL, 0);
 
-    TEST(result == -1, "NULL input handled", "NULL input not handled");
+    TEST(sorted == NULL, "NULL input handled", "NULL input not handled");
     printf("Test 4 complete\n\n");
 }
 
@@ -122,9 +116,9 @@ void test_sort_out_of_bounds(void) {
     vec_push(rows, make_row("A", "B"));
     vec_push(rows, make_row("C", "D"));
 
-    int result = sort_by_column(rows, 5);
+    Vec *sorted = sort_by_column(rows, 5);
 
-    TEST(result == -1, "Out-of-bounds column rejected", "Out-of-bounds not detected");
+    TEST(sorted == NULL, "Out-of-bounds column rejected", "Out-of-bounds not detected");
 
     vec_free(rows);
     printf("Test 5 complete\n\n");
@@ -137,9 +131,9 @@ void test_sort_null_row_inside(void) {
     vec_push(rows, NULL);
     vec_push(rows, make_row("A", "1"));
 
-    int result = sort_by_column(rows, 0);
+    Vec *sorted = sort_by_column(rows, 0);
 
-    TEST(result == -1, "NULL row inside rejected", "NULL row inside not handled");
+    TEST(sorted == NULL, "NULL row inside rejected", "NULL row inside not handled");
 
     vec_free(rows);
     printf("Test 6 complete\n\n");
@@ -153,24 +147,25 @@ void test_sort_repeated_values(void) {
     vec_push(rows, make_row("C", "10"));
     vec_push(rows, make_row("D", "10"));
 
-    sort_by_column(rows, 1);
+    Vec *sorted = sort_by_column(rows, 1);
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 0), 0), "A") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 0), 0), "A") == 0,
          "Repeat values: A correct",
          "Repeat values: A wrong");
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 1), 0), "B") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 1), 0), "B") == 0,
          "Repeat values: B correct",
          "Repeat values: B wrong");
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 2), 0), "C") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 2), 0), "C") == 0,
          "Repeat values: C correct",
          "Repeat values: C wrong");
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 3), 0), "D") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 3), 0), "D") == 0,
          "Repeat values: D correct",
          "Repeat values: D wrong");
 
+    vec_free(sorted);
     vec_free(rows);
     printf("Test 7 complete\n\n");
 }
@@ -180,12 +175,13 @@ void test_sort_single_row(void) {
     Vec *rows = vec_new(1);
     vec_push(rows, make_row("Only", "999"));
 
-    sort_by_column(rows, 1);
+    Vec *sorted = sort_by_column(rows, 1);
 
-    TEST(strcmp(row_get_cell(vec_get(rows, 0), 0), "Only") == 0,
+    TEST(strcmp(row_get_cell(vec_get(sorted, 0), 0), "Only") == 0,
          "Single row unchanged",
          "Single row changed");
 
+    vec_free(sorted);
     vec_free(rows);
     printf("Test 8 complete\n\n");
 }

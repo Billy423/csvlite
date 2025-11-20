@@ -11,15 +11,17 @@
 #include "vec.h"
 #include "row.h"
 
-/* Sorts rows in-place by column index.
- *
+/* Sorts rows by a specified column index.
+ * Returns a NEW Vec* containing sorted Row* pointers.
+ * 
  * PARAMETERS:
- *   rows, Vec* of Row*
- *   col_index, column to sort by
+ *   rows - Vec* of Row*
+ *   col_index - column to sort by
  *
  * RETURNS:
- *   0 on success, -1 on error
+ *   Vec*  - newly allocated sorted vector
+ *   NULL  - on invalid arguments or memory failure
  */
-int sort_by_column(Vec *rows, int col_index);
+Vec *sort_by_column(Vec *rows, int col_index);
 
 #endif

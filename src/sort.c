@@ -88,50 +88,59 @@ static int rowptr_compare(const void *a, const void *b) {
  *   col_index - column index to sort by 
  *
  * RETURNS:
- *   0  on success
- *  -1  on error (NULL vec, invalid column, allocation failure)
+ *   A new Vec* containing the sorted rows.
+ *   NULL on invalid input or memory failure.
  */
-int sort_by_column(Vec *rows, int col_index) {
+Vec *sort_by_column(Vec *rows, int col_index) {
     if (!rows || col_index < 0)
-        return -1;
+        return NULL;
 
     size_t len = vec_length(rows);
-    if (len <= 1)
-        return 0;
+    if (len == 0)
+        return vec_new(1);
+    // Already sorted, return as-is
+    if (len == 1)
+        return rows;
 
     Row *first = vec_get(rows, 0);
     if (!first)
-        return -1;
+        return NULL;
 
     if (col_index >= row_num_cells(first))
-        return -1;
+        return NULL;
 
-    // Validate no NULL rows inside vector
+    Row **tmp = malloc(sizeof(Row *) * len);
+
+    if (!tmp)
+        return NULL;
+
     for (size_t i = 0; i < len; i++) {
-        if (vec_get(rows, i) == NULL)
-            return -1;
+        Row *current = vec_get(rows, i);
+        if (!current) {
+            free(tmp);
+            return NULL;
+        }
+        tmp[i] = current;
     }
 
     g_sort_col = col_index;
-
-    // Allocate temporary array of pointers 
-    Row **tmp = malloc(len * sizeof(Row *));
-    if (!tmp)
-        return -1;
-
-    // Copy vector items into array
-    for (size_t i = 0; i < len; i++) {
-        tmp[i] = vec_get(rows, i);
-    }
-
-    // Sort using qsort
     qsort(tmp, len, sizeof(Row *), rowptr_compare);
 
-    // Copy sorted pointers back into vector
+    /* Build a NEW vector and push sorted pointers */
+    Vec *sorted = vec_new(len);
+    if (!sorted) {
+        free(tmp);
+        return NULL;
+    }
+
     for (size_t i = 0; i < len; i++) {
-        rows->items[i] = tmp[i];
+        if (vec_push(sorted, tmp[i]) != 0) {
+            vec_free(sorted);
+            free(tmp);
+            return NULL;
+        }
     }
 
     free(tmp);
-    return 0;
+    return sorted;
 }

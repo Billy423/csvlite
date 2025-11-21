@@ -18,5 +18,7 @@ extern char* g_select_cols;
 extern char* g_where_cond;
 extern int g_help_flag;
 extern int g_use_stdin;
+extern char* g_group_by_col;
+extern char* g_order_by_col;
 
 #endif

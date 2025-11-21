@@ -36,7 +36,7 @@ void test_sort_numeric_column(void) {
     vec_push(rows, make_row("Carol", "88"));
     vec_push(rows, make_row("Dave", "75"));
 
-    Vec *sorted = sort_by_column(rows, 1);
+    Vec *sorted = sort_by_column(rows, 1, 1);
 
     TEST(strcmp(row_get_cell(vec_get(sorted, 0), 0), "Dave") == 0,
          "Numeric sort: row 0 correct",
@@ -67,7 +67,7 @@ void test_sort_text_column(void) {
     vec_push(rows, make_row("Bob", "2"));
     vec_push(rows, make_row("David", "4"));
 
-    Vec *sorted = sort_by_column(rows, 0);
+    Vec *sorted = sort_by_column(rows, 0, 1);
 
     TEST(strcmp(row_get_cell(vec_get(sorted, 0), 0), "Alice") == 0,
          "Text sort: row 0 correct",
@@ -94,7 +94,7 @@ void test_sort_text_column(void) {
 void test_sort_empty_vector(void) {
     Vec *rows = vec_new(0);
 
-    Vec *sorted = sort_by_column(rows, 0);
+    Vec *sorted = sort_by_column(rows, 0, 1);
 
     TEST(sorted == NULL, "Empty vector: OK", "Empty vector: returned non-NULL");
 
@@ -104,7 +104,7 @@ void test_sort_empty_vector(void) {
 
 //  Test 4: NULL input should return NULL
 void test_sort_null_input(void) {
-    Vec *sorted = sort_by_column(NULL, 0);
+    Vec *sorted = sort_by_column(NULL, 0, 1);
 
     TEST(sorted == NULL, "NULL input handled", "NULL input not handled");
     printf("Test 4 complete\n\n");
@@ -116,7 +116,7 @@ void test_sort_out_of_bounds(void) {
     vec_push(rows, make_row("A", "B"));
     vec_push(rows, make_row("C", "D"));
 
-    Vec *sorted = sort_by_column(rows, 5);
+    Vec *sorted = sort_by_column(rows, 5, 1);
 
     TEST(sorted == NULL, "Out-of-bounds column rejected", "Out-of-bounds not detected");
 
@@ -154,7 +154,7 @@ void test_sort_repeated_values(void) {
     vec_push(rows, make_row("C", "10"));
     vec_push(rows, make_row("D", "10"));
 
-    Vec *sorted = sort_by_column(rows, 1);
+    Vec *sorted = sort_by_column(rows, 1, 1);
 
     // verify sorting succeeded and length is correct
     TEST(sorted != NULL, "Repeat values: sort succeeded", "Repeat values: sort failed");
@@ -170,7 +170,7 @@ void test_sort_single_row(void) {
     Vec *rows = vec_new(1);
     vec_push(rows, make_row("Only", "999"));
 
-    Vec *sorted = sort_by_column(rows, 1);
+    Vec *sorted = sort_by_column(rows, 1, 1);
 
     TEST(strcmp(row_get_cell(vec_get(sorted, 0), 0), "Only") == 0,
          "Single row unchanged",

@@ -19,11 +19,12 @@
  * PARAMETERS:
  *   rows - Vec* of Row*
  *   col_index - column to sort by
+ *   ascending - 1 for ascending order, 0 for descending order
  *
  * RETURNS:
  *   Vec*  - newly allocated sorted vector
  *   NULL  - on invalid arguments or memory failure
  */
-Vec *sort_by_column(Vec *rows, int col_index);
+Vec *sort_by_column(Vec *rows, int col_index, int ascending);
 
 #endif

@@ -21,11 +21,25 @@ jobs:
     - name: Build
       run: make clean && make
     
-    - name: Run tests
-      run: make test 2>&1 test_report.txt || echo "Tests not yet implemented"
+    - name: Make integration test executable
+      run: chmod +x tests/e2e/integration_test.sh
+    
+    - name: Run unit tests
+      run: make unit-test 2>&1 | tee unit_test_report.txt || true
+    
+    - name: Run integration tests
+      run: make test-e2e 2>&1 | tee integration_test_report.txt || true
     
     - name: Generate coverage
-      run: make coverage 2>&1 coverage_report.txt || echo "Coverage not yet implemented"
+      run: make coverage 2>&1 | tee coverage_report.txt || echo "Coverage not yet implemented" > coverage_report.txt
 
-    # add test and coverage reports to the job output
-    # - implement this in the future
+    - name: Upload test reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-reports
+        path: |
+          unit_test_report.txt
+          integration_test_report.txt
+          coverage_report.txt
+        retention-days: 30

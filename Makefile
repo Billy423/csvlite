@@ -22,10 +22,12 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Run all tests
-test: test-row test-vec test-hmap test-csv test-cli test-select test-sort test-group
+unit-test: test-row test-vec test-hmap test-csv test-cli test-select test-sort test-group
+test: unit-test test-e2e
 
 # Special handling for vec which depends on row
 test-vec: $(UNIT_TEST_DIR)/vec_test.c
+	@echo "================================================"
 	@echo "Building and running vec tests..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_vec $< src/vec.c src/row.c
 	@./test_vec
@@ -33,6 +35,7 @@ test-vec: $(UNIT_TEST_DIR)/vec_test.c
 
 # Test csv
 test-csv: $(UNIT_TEST_DIR)/csv_test.c
+	@echo "================================================"
 	@echo "Building and running csv tests..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_csv $< src/csv.c src/row.c src/vec.c src/hmap.c
 	@./test_csv
@@ -40,6 +43,7 @@ test-csv: $(UNIT_TEST_DIR)/csv_test.c
 
 # Test cli
 test-cli: $(UNIT_TEST_DIR)/cli_test.c
+	@echo "================================================"
 	@echo "Building and running cli tests..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_cli $< src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c
 	@./test_cli
@@ -48,6 +52,7 @@ test-cli: $(UNIT_TEST_DIR)/cli_test.c
 
 # Special handling for select which depends on row, vec, and hmap
 test-select: $(UNIT_TEST_DIR)/select_test.c
+	@echo "================================================"
 	@echo "Building and running select tests..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_select $< src/select.c src/vec.c src/row.c src/hmap.c
 	@./test_select
@@ -55,12 +60,14 @@ test-select: $(UNIT_TEST_DIR)/select_test.c
 
 # Test group 
 test-group: $(UNIT_TEST_DIR)/group_test.c
+	@echo "================================================"
 	@echo "Building and running group tests..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_group $< src/group.c src/row.c src/vec.c src/hmap.c
 	@./test_group
 	@rm -f test_group
 # Test sort
 test-sort: $(UNIT_TEST_DIR)/sort_test.c
+	@echo "================================================"
 	@echo "Building and running sort tests..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_sort $< src/sort.c src/vec.c src/row.c
 	@./test_sort
@@ -68,6 +75,7 @@ test-sort: $(UNIT_TEST_DIR)/sort_test.c
  
 # Build and run individual unit test (e.g. make test-vec)
 test-%: $(UNIT_TEST_DIR)/%_test.c
+	@echo "================================================"
 	@echo "Building and running $* tests..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_$* $< src/$*.c
 	@./test_$*
@@ -81,4 +89,9 @@ clean:
 	rm -f test_* $(UNIT_TEST_DIR)/*.o src/*.o
 	rm -f *.gcno *.gcda *.gcov *.exe
 
-.PHONY: all test test-vec test-sort test-% coverage clean
+# Integration tests
+test-e2e: $(TARGET)
+	@echo "Running integration tests..."
+	@bash tests/e2e/integration_test.sh
+
+.PHONY: all test test-vec test-sort test-% test-e2e coverage clean

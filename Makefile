@@ -5,9 +5,8 @@ INCLUDES = -Iinclude
 TARGET = csvlite
 
 # Source files
-SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c 
+SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c src/sort.c
 OBJECTS = $(SOURCES:.c=.o)
-TEST_SRC = tests/unit/vec_test.c tests/unit/csv_test.c
 
 # Unit tests configuration
 UNIT_TEST_DIR = tests/unit
@@ -23,7 +22,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Run all tests
-test: test-row test-vec test-hmap test-csv test-cli test-select
+test: test-row test-vec test-hmap test-csv test-cli test-select test-sort
 
 # Special handling for vec which depends on row
 test-vec: $(UNIT_TEST_DIR)/vec_test.c
@@ -55,11 +54,9 @@ test-select: $(UNIT_TEST_DIR)/select_test.c
 	@rm -f test_select
 
 # Test sort
-test-sort: tests/unit/sort_test.c
+test-sort: $(UNIT_TEST_DIR)/sort_test.c
 	@echo "Building and running sort tests..."
-	@$(CC) $(CFLAGS) $(INCLUDES) -o test_sort \
-	    tests/unit/sort_test.c \
-	    src/sort.c src/vec.c src/row.c src/hmap.c
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_sort $< src/sort.c src/vec.c src/row.c
 	@./test_sort
 	@rm -f test_sort
  
@@ -78,4 +75,4 @@ clean:
 	rm -f test_* $(UNIT_TEST_DIR)/*.o src/*.o
 	rm -f *.gcno *.gcda *.gcov *.exe
 
-.PHONY: all test test-vec test-% coverage clean
+.PHONY: all test test-vec test-sort test-% coverage clean

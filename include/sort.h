@@ -2,7 +2,9 @@
  * Provides functions for sorting a vector of Row pointers based on a
  * specific column index. Uses qsort() from stdlib.
  *
- * Vivek Patel, November 17, 2025, v0.0.1
+ * AUTHOR: Vivek Patel
+ * DATE: November 17, 2025
+ * VERSION: v0.0.3
  */
 
 #ifndef SORT_H

@@ -1,8 +1,11 @@
-/* Implements basic sorting for CSV rows using qsort().
+/*
+ * Implements basic sorting for CSV rows using qsort().
  * Sorting is based on a specific column index. 
  * The comparison function uses strcmp() on the cell strings.
  *
- * Vivek Patel, November 17, 2025, v0.0.2
+ * AUTHOR: Vivek Patel
+ * DATE: November 17, 2025
+ * VERSION: v0.0.3
  */
 
 
@@ -81,7 +84,8 @@ static int rowptr_compare(const void *a, const void *b) {
     return strcmp(sa, sb);
 }
 
-/* Sorts rows in-place by column.
+/* Sorts rows by column and returns a new sorted vector.
+ * The original vector is not modified.
  * 
  * PARAMETERS:
  *   rows      - Vec* of Row*
@@ -97,10 +101,27 @@ Vec *sort_by_column(Vec *rows, int col_index) {
 
     size_t len = vec_length(rows);
     if (len == 0)
-        return vec_new(1);
-    // Already sorted, return as-is
-    if (len == 1)
-        return rows;
+        return NULL;
+    
+    // single row: create new vector with the row
+    if (len == 1) {
+        Vec *sorted = vec_new(1);
+        if (sorted == NULL) { // allocation failed
+            return NULL;
+        }
+
+        Row *row = vec_get(rows, 0);
+        if (row == NULL) { // row is NULL
+            vec_free(sorted);
+            return NULL;
+        }
+        
+        if (vec_push(sorted, row) != 0) { // failed to add row
+            vec_free(sorted);
+            return NULL;
+        }
+        return sorted;
+    }
 
     Row *first = vec_get(rows, 0);
     if (!first)

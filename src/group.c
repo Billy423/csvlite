@@ -3,7 +3,7 @@
  * the Lead Developer’s hash map (hmap) to track unique column values
  * and returns a vector containing one representative row per group.
  *
- * Vivek Patel, November 11, 2025, v0.0.2
+ * Vivek Patel, November 11, 2025, v0.0.3
  */
 
 #include "group.h"
@@ -30,6 +30,12 @@ static void free_group_results(Vec *grouped) {
 /* Groups rows by a specific column index. Each unique column value
  * (from the specified index) is stored in a hash map, ensuring that
  * only one representative row per group is kept.
+ * 
+ * MEMORY OWNERSHIP:
+ * - Returns a new Vec* that the caller must free with vec_free()
+ * - Reuses Row* pointers from input (does NOT copy Row objects)
+ * - Caller must free Row objects separately (they are shared)
+ * - Does NOT free the input Vec or Row objects
  *
  * PARAMETERS:
  *  rows, a Vec* containing Row* elements (input dataset)
@@ -45,10 +51,16 @@ Vec* group_by_column(Vec* rows, int col_index)
 {
     
     // Validate input rows and column index
-    if (!rows ||
-        vec_length(rows) == 0 ||
-        col_index < 0 ||
-        col_index >= row_num_cells(vec_get(rows, 0))) {
+    if (!rows || vec_length(rows) == 0) {
+        return NULL;
+    }
+
+    Row *first = vec_get(rows, 0);
+    if (!first) {
+        return NULL;  // first row is NULL (defensive check)
+    }
+
+    if (col_index < 0 || col_index >= row_num_cells(first)) {
         return NULL;
     }
 
@@ -68,6 +80,8 @@ Vec* group_by_column(Vec* rows, int col_index)
     // Iterate through all rows
     for (size_t i = 0; i < n; i++) {
         Row *row = vec_get(rows, i);
+        if (!row) continue; // skip NULL rows (shouldn't happen, but just in case)
+
         const char *key = row_get_cell(row, col_index);
         if (!key) key = "";
 

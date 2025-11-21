@@ -1,7 +1,7 @@
 /* Header file defining the interface for group-by operations in CSVLite.
  * Provides function declarations for grouping and future aggregation logic.
  *
- * Vivek Patel, November 11, 2025, v0.0.2
+ * Vivek Patel, November 11, 2025, v0.0.3
  */
 
 #ifndef GROUP_H
@@ -13,6 +13,12 @@
 
 /* Groups rows by a specific column index.
  * Returns a new Vec* containing one representative Row* per group.
+ *
+ * MEMORY OWNERSHIP:
+ * - Returns a new Vec* that the caller must free with vec_free()
+ * - Reuses Row* pointers from input (does NOT copy Row objects)
+ * - Caller must free Row objects separately (they are shared)
+ * - Does NOT free the input Vec or Row objects
  *
  * PARAMETERS:
  *  rows, a Vec* containing Row* elements

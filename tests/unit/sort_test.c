@@ -56,7 +56,7 @@ void test_sort_numeric_column(void) {
 
     vec_free(sorted);
     vec_free(rows);
-    printf("Test 1 complete\n\n");
+    printf("Test 1: Numeric sort - Complete\n\n");
 }
 
 //  Test 2: Text sorting
@@ -87,7 +87,7 @@ void test_sort_text_column(void) {
 
     vec_free(sorted);
     vec_free(rows);
-    printf("Test 2 complete\n\n");
+    printf("Test 2: Text sort - Complete\n\n");
 }
 
 //  Test 3: Empty vector should return NULL
@@ -99,7 +99,7 @@ void test_sort_empty_vector(void) {
     TEST(sorted == NULL, "Empty vector: OK", "Empty vector: returned non-NULL");
 
     vec_free(rows);
-    printf("Test 3 complete\n\n");
+    printf("Test 3: Empty vector - Complete\n\n");
 }
 
 //  Test 4: NULL input should return NULL
@@ -107,7 +107,7 @@ void test_sort_null_input(void) {
     Vec *sorted = sort_by_column(NULL, 0, 1);
 
     TEST(sorted == NULL, "NULL input handled", "NULL input not handled");
-    printf("Test 4 complete\n\n");
+    printf("Test 4: NULL input - Complete\n\n");
 }
 
 //  Test 5: Out-of-bounds column index
@@ -121,7 +121,7 @@ void test_sort_out_of_bounds(void) {
     TEST(sorted == NULL, "Out-of-bounds column rejected", "Out-of-bounds not detected");
 
     vec_free(rows);
-    printf("Test 5 complete\n\n");
+    printf("Test 5: Out-of-bounds column - Complete\n\n");
 }
 
 //  Test 6: NULL row inside vector
@@ -162,7 +162,7 @@ void test_sort_repeated_values(void) {
 
     vec_free(sorted);
     vec_free(rows);
-    printf("Test 7 complete\n\n");
+    printf("Test 7: Repeated values - Complete\n\n");
 }
 
 //  Test 8: Single row
@@ -178,7 +178,7 @@ void test_sort_single_row(void) {
 
     vec_free(sorted);
     vec_free(rows);
-    printf("Test 8 complete\n\n");
+    printf("Test 8: Single row - Complete\n\n");
 }
 
 // Main test driver

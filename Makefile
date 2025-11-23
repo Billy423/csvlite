@@ -90,14 +90,38 @@ test-%: $(UNIT_TEST_DIR)/%_test.c
 	@rm -f test_$*
 
 
-coverage:
-	@echo "Coverage not yet implemented"
+# Coverage testing with gcov
+coverage: clean
+	@echo "================================================"
+	@echo "Step 1: Compiling with coverage flags..."
+	@echo "================================================"
+	@$(MAKE) test-unit CFLAGS="$(CFLAGS) --coverage"
+	@echo ""
+	@echo "Building main executable with coverage flags..."
+	@$(CC) $(CFLAGS) --coverage $(INCLUDES) -o $(TARGET) $(SOURCES)
+	@echo "Running integration tests to generate coverage for main.c..."
+	@bash tests/e2e/integration_test.sh > /dev/null 2>&1 || true
+	@echo ""
+	@echo "================================================"
+	@echo "Step 2: Tests executed (generated .gcda files)"
+	@echo "================================================"
+	@echo ""
+	@echo "================================================"
+	@echo "Step 3: Generating coverage reports with gcov..."
+	@echo "================================================"
+	@echo "Coverage reports:"
+	@for file in $(SOURCES); do \
+		bash scripts/generate_coverage.sh $$file; \
+	done
+	@echo ""
+	@echo "Coverage reports generated. Check coverage_reports/ directory for .gcov files."
 
 
 clean:
 	rm -f $(TARGET) $(OBJECTS)
 	rm -f test_* $(UNIT_TEST_DIR)/*.o src/*.o
 	rm -f *.gcno *.gcda *.gcov *.exe
+	rm -rf coverage_reports
 
 # Integration tests
 test-e2e: $(TARGET)

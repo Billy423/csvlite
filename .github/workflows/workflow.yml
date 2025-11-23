@@ -19,8 +19,9 @@ jobs:
     - name: Build
       run: make clean && make
     
-    - name: Make integration test executable
-      run: chmod +x tests/e2e/integration_test.sh
+    - name: Make test and coverage scripts executable
+      run: |
+        chmod +x tests/e2e/integration_test.sh scripts/generate_coverage.sh
     
     - name: Run unit tests
       run: make unit-test 2>&1 | tee unit_test_report.txt || true
@@ -29,7 +30,7 @@ jobs:
       run: make test-e2e 2>&1 | tee integration_test_report.txt || true
     
     - name: Generate coverage
-      run: make coverage 2>&1 | tee coverage_report.txt || echo "Coverage not yet implemented" > coverage_report.txt
+      run: make coverage 2>&1 | tee coverage_report.txt || true
 
     - name: Upload test reports
       uses: actions/upload-artifact@v4

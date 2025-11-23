@@ -5,7 +5,7 @@ INCLUDES = -Iinclude
 TARGET = csvlite
 
 # Source files
-SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c src/sort.c src/group.c
+SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c src/sort.c src/group.c src/where.c
 OBJECTS = $(SOURCES:.c=.o)
 
 # Unit tests configuration
@@ -22,7 +22,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Run all tests
-unit-test: test-row test-vec test-hmap test-csv test-cli test-select test-sort test-group
+unit-test: test-row test-vec test-hmap test-csv test-cli test-select test-sort test-group test-where
 test: unit-test test-e2e
 
 # Special handling for vec which depends on row
@@ -72,7 +72,14 @@ test-sort: $(UNIT_TEST_DIR)/sort_test.c
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_sort $< src/sort.c src/vec.c src/row.c
 	@./test_sort
 	@rm -f test_sort
- 
+
+# Special handling for where which depends on row and vec
+test-where: $(UNIT_TEST_DIR)/where_test.c
+	@echo "Building and running where tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_where $< src/where.c src/vec.c src/row.c
+	@./test_where
+	@rm -f test_where
+
 # Build and run individual unit test (e.g. make test-vec)
 test-%: $(UNIT_TEST_DIR)/%_test.c
 	@echo "================================================"
@@ -81,8 +88,10 @@ test-%: $(UNIT_TEST_DIR)/%_test.c
 	@./test_$*
 	@rm -f test_$*
 
+
 coverage:
 	@echo "Coverage not yet implemented"
+
 
 clean:
 	rm -f $(TARGET) $(OBJECTS)

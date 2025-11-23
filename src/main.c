@@ -12,7 +12,7 @@
 #include "csv.h"
 #include "cli.h"
 #include "select.h"   
-// #include "where.h"    
+#include "where.h"    
 #include "group.h"
 #include "sort.h"
 #include "hmap.h"
@@ -154,17 +154,27 @@ static Vec* apply_select(Vec* rows, const char* select_cols) {
 }
 
 /*
- * Placeholder for applying WHERE filtering.
+ * Apply WHERE filtering using where_filter().
+ *
+ * MEMORY OWNERSHIP:
+ * - where_filter() returns a new Vec but reuses Row* pointers from input
+ * - only free the original Vec structure
+ * - caller must free Row objects from the returned Vec later
  */
 static Vec* apply_where(Vec* rows, const char* where_cond) {
     if (where_cond == NULL) {
-        return rows; /* nothing to do */
+        return rows; 
     }
 
-    /* TODO: call real where_filter() once implemented */
-    fprintf(stderr, "[INFO] WHERE placeholder: would filter rows using condition: %s\n", where_cond);
+    Vec *filtered = where_filter(rows, where_cond);
+    if (filtered == NULL) {
+        fprintf(stderr, "Error: WHERE filtering failed\n");
+        return rows;  
+    }
 
-    return rows;
+    // free original Vec structure (Row objects are shared with filtered Vec)
+    vec_free(rows);
+    return filtered;
 }
 
 /*

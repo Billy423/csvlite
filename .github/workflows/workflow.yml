@@ -22,10 +22,11 @@ jobs:
       run: make clean && make
     
     - name: Run tests
-      run: make test 2>&1 test_report.txt || echo "Tests not yet implemented"
-    
+      run: make test > test_report.txt 2>&1 || echo "Tests not yet implemented"
+
     - name: Generate coverage
-      run: make coverage 2>&1 coverage_report.txt || echo "Coverage not yet implemented"
+      run: make coverage > coverage_report.txt 2>&1 || echo "Coverage not yet implemented"
+
 
     # add test and coverage reports to the job output
     # - implement this in the future

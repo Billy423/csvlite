@@ -1,11 +1,18 @@
-CC = gcc
-CFLAGS = -std=c11 -Wall -Wextra -Werror
+CC       = gcc
+CFLAGS   = -std=c11 -Wall -Wextra -Werror
 INCLUDES = -Iinclude
+LDFLAGS  =
 
 TARGET = csvlite
 
+# Enable coverage with: make COVERAGE=1 test / make COVERAGE=1 all
+ifeq ($(COVERAGE),1)
+CFLAGS  += --coverage
+LDFLAGS += --coverage
+endif
+
 # Source files
-SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c 
+SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c
 OBJECTS = $(SOURCES:.c=.o)
 TEST_SRC = tests/unit/vec_test.c tests/unit/csv_test.c
 
@@ -16,7 +23,7 @@ all: $(TARGET)
 
 # Main application
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ $(LDFLAGS)
 
 # Object files
 %.o: %.c
@@ -28,41 +35,45 @@ test: test-row test-vec test-hmap test-csv test-cli test-select
 # Special handling for vec which depends on row
 test-vec: $(UNIT_TEST_DIR)/vec_test.c
 	@echo "Building and running vec tests..."
-	@$(CC) $(CFLAGS) $(INCLUDES) -o test_vec $< src/vec.c src/row.c
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_vec $< src/vec.c src/row.c $(LDFLAGS)
 	@./test_vec
 	@rm -f test_vec
 
 # Test csv
 test-csv: $(UNIT_TEST_DIR)/csv_test.c
 	@echo "Building and running csv tests..."
-	@$(CC) $(CFLAGS) $(INCLUDES) -o test_csv $< src/csv.c src/row.c src/vec.c src/hmap.c
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_csv $< src/csv.c src/row.c src/vec.c src/hmap.c $(LDFLAGS)
 	@./test_csv
 	@rm -f test_csv
 
 # Test cli
 test-cli: $(UNIT_TEST_DIR)/cli_test.c
 	@echo "Building and running cli tests..."
-	@$(CC) $(CFLAGS) $(INCLUDES) -o test_cli $< src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_cli $< src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c $(LDFLAGS)
 	@./test_cli
 	@rm -f test_cli
-
 
 # Special handling for select which depends on row, vec, and hmap
 test-select: $(UNIT_TEST_DIR)/select_test.c
 	@echo "Building and running select tests..."
-	@$(CC) $(CFLAGS) $(INCLUDES) -o test_select $< src/select.c src/vec.c src/row.c src/hmap.c
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_select $< src/select.c src/vec.c src/row.c src/hmap.c $(LDFLAGS)
 	@./test_select
 	@rm -f test_select
- 
+
 # Build and run individual unit test (e.g. make test-vec)
 test-%: $(UNIT_TEST_DIR)/%_test.c
 	@echo "Building and running $* tests..."
-	@$(CC) $(CFLAGS) $(INCLUDES) -o test_$* $< src/$*.c
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_$* $< src/$*.c $(LDFLAGS)
 	@./test_$*
 	@rm -f test_$*
 
-coverage:
-	@echo "Coverage not yet implemented"
+# Coverage: rebuild with coverage flags, run tests, then gcovr
+coverage: clean
+	@echo "== Building and running tests with coverage =="
+	$(MAKE) COVERAGE=1 test
+	@echo ""
+	@echo "== Generating coverage report =="
+	@gcovr -r . --exclude 'tests' --exclude 'data' || echo "gcovr not installed?"
 
 clean:
 	rm -f $(TARGET) $(OBJECTS)

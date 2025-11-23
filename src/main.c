@@ -31,6 +31,11 @@ static Vec* apply_select(Vec* rows, const char* select_cols) {
 
 /*
  * Apply WHERE filtering using where_filter().
+ *
+ * MEMORY OWNERSHIP:
+ * - where_filter() returns a new Vec but reuses Row* pointers from input
+ * - only free the original Vec structure
+ * - caller must free Row objects from the returned Vec later
  */
 static Vec* apply_where(Vec* rows, const char* where_cond) {
     if (where_cond == NULL) {
@@ -43,6 +48,7 @@ static Vec* apply_where(Vec* rows, const char* where_cond) {
         return rows;  
     }
 
+    // free original Vec structure (Row objects are shared with filtered Vec)
     vec_free(rows);
     return filtered;
 }

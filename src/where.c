@@ -294,11 +294,18 @@ static int matches_condition(
 /*
  * Filters rows using a single WHERE condition, like "age>=18" or "name==Alice".
  *
- * parameters:
- *  - rows: vector of Row*; row 0 is assumed to be the header
- *  - condition: where expression from CLI
+ * MEMORY OWNERSHIP:
+ * - Returns a new Vec* that the caller must free with vec_free()
+ * - Reuses Row* pointers from input (does NOT copy Row objects)
+ * - Caller must free Row objects separately (they are shared with input Vec)
+ * - Does NOT free the input Vec or Row objects
  *
- * RETURN:
+ * PARAMETERS:
+ *  - rows: vector of Row*, row 0 is assumed to be the header row
+ *  - condition: where expression from CLI (format: "<column><op><value>")
+ *               used operators: ==, !=, >=, <=, >, <
+ *
+ * RETURNS:
  *  - new Vec* containing header + only matching data rows
  *  - NULL on failure (bad condition, memory issues, etc.)
  */
@@ -307,8 +314,8 @@ Vec *where_filter(const Vec *rows, const char *condition) {
         return NULL;
     }
 
-    int total_rows = (int)vec_length(rows);
-    if (total_rows <= 0) {
+    size_t total_rows = vec_length(rows);
+    if (total_rows == 0) {
         return NULL;
     }
 
@@ -337,7 +344,7 @@ Vec *where_filter(const Vec *rows, const char *condition) {
     }
 
     //Prepare result vector: at most total_rows rows
-    Vec *result = vec_new((size_t)total_rows);
+    Vec *result = vec_new(total_rows);
     if (result == NULL) {
         free(col_token);
         free(rhs_value);
@@ -349,8 +356,8 @@ Vec *where_filter(const Vec *rows, const char *condition) {
     vec_push(result, header_row);
 
     //Filter the remaining rows 
-    for (int i = 1; i < total_rows; i++) {
-        Row *r = vec_get(rows, (size_t)i);
+    for (size_t i = 1; i < total_rows; i++) {
+        Row *r = vec_get(rows, i);
         const char *cell = row_get_cell(r, col_index);
 
         if (matches_condition(cell, rhs_value, op_type)) {

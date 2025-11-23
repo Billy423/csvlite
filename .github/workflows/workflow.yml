@@ -24,7 +24,7 @@ jobs:
         chmod +x tests/e2e/integration_test.sh scripts/generate_coverage.sh
     
     - name: Run unit tests
-      run: make unit-test 2>&1 | tee unit_test_report.txt || true
+      run: make test-unit 2>&1 | tee unit_test_report.txt || true
     
     - name: Run integration tests
       run: make test-e2e 2>&1 | tee integration_test_report.txt || true

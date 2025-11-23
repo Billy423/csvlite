@@ -12,9 +12,8 @@ LDFLAGS += --coverage
 endif
 
 # Source files
-SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c
+SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c src/sort.c src/group.c
 OBJECTS = $(SOURCES:.c=.o)
-TEST_SRC = tests/unit/vec_test.c tests/unit/csv_test.c
 
 # Unit tests configuration
 UNIT_TEST_DIR = tests/unit
@@ -30,7 +29,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Run all tests
-test: test-row test-vec test-hmap test-csv test-cli test-select
+test: test-row test-vec test-hmap test-csv test-cli test-select test-sort test-group
 
 # Special handling for vec which depends on row
 test-vec: $(UNIT_TEST_DIR)/vec_test.c
@@ -60,6 +59,20 @@ test-select: $(UNIT_TEST_DIR)/select_test.c
 	@./test_select
 	@rm -f test_select
 
+# Test group 
+test-group: $(UNIT_TEST_DIR)/group_test.c
+	@echo "Building and running group tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_group $< src/group.c src/row.c src/vec.c src/hmap.c $(LDFLAGS)
+	@./test_group
+	@rm -f test_group
+
+# Test sort
+test-sort: $(UNIT_TEST_DIR)/sort_test.c
+	@echo "Building and running sort tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_sort $< src/sort.c src/vec.c src/row.c $(LDFLAGS)
+	@./test_sort
+	@rm -f test_sort
+
 # Build and run individual unit test (e.g. make test-vec)
 test-%: $(UNIT_TEST_DIR)/%_test.c
 	@echo "Building and running $* tests..."
@@ -80,4 +93,4 @@ clean:
 	rm -f test_* $(UNIT_TEST_DIR)/*.o src/*.o
 	rm -f *.gcno *.gcda *.gcov *.exe
 
-.PHONY: all test test-vec test-% coverage clean
+.PHONY: all test test-vec test-sort test-group test-% coverage clean

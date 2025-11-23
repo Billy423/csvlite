@@ -1,4 +1,3 @@
-
 /*
  * Provides functions for selecting specific columns from a CSV dataset.
  * This module parses a user’s --select argument and returns the list of column indices. 
@@ -6,7 +5,7 @@
  *
  * AUTHOR: Nadeem Mohamed
  * DATE: November 10, 2025
- * VERSION: v0.0.1
+ * VERSION: v1.0.0
 */
 
 #include "../include/select.h"

@@ -1,11 +1,8 @@
-/* Sorting operations for CSV rows.
- * Provides functions for sorting a vector of Row pointers based on a
- * specific column index. Uses qsort() from stdlib.
- *
- * AUTHOR: Vivek Patel
- * DATE: November 17, 2025
- * VERSION: v0.0.3
- */
+/*
+* AUTHOR: Vivek Patel
+* DATE: November 17, 2025
+* VERSION: v1.0.0
+*/
 
 #ifndef SORT_H
 #define SORT_H

@@ -1,15 +1,11 @@
-/**
- * hmap.c - Hash map implementation for string key -> void* value pairs
- * 
- * Provides a hash table with collision handling. 
- * 
- * Note:
- * - The capacity is fixed and does not change after initialization
- * - The resize feature is not implemented (given the scope of the project)
- * 
+/*
+ * Provides a hash table with collision handling for string key -> void* value pairs.
+ * The capacity is fixed and does not change after initialization.
+ * The resize feature is not implemented (given the scope of the project).
+ *
  * AUTHOR: Billy
- * DATE: 2025-11-11
- * VERSION: v0.0.1
+ * DATE: November 11, 2025
+ * VERSION: v1.0.0
  */
 
 #include "../include/hmap.h"

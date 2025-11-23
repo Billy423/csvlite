@@ -1,12 +1,10 @@
-/**
- * vec.c - Dynamic array implementation for storing Row pointers
- * 
+/*
  * Provides a resizable array that automatically grows when full.
  * Used by Query team to store and access CSV row data.
- * 
+ *
  * AUTHOR: Billy
- * DATE: 2025-11-11
- * VERSION: v0.0.2
+ * DATE: November 11, 2025
+ * VERSION: v1.0.0
  */
 
 #include "../include/vec.h"

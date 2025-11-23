@@ -1,8 +1,11 @@
 /*
-* AUTHOR: Billy Wu, Nikhil Ranjith
-* DATE: November 21, 2025
-* VERSION: v0.0.2
-*/
+ * Main orchestration module for CSVLite.
+ * Integrates all modules (csv, cli, select, where, group, sort) to process CSV files.
+ *
+ * AUTHOR: Billy Wu, Nikhil Ranjith
+ * DATE: November 21, 2025
+ * VERSION: v1.0.0
+ */
 
 #include <stdio.h>
 #include <stdlib.h>

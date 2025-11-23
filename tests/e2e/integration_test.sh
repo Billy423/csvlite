@@ -42,6 +42,7 @@ test() {
     echo ""
 }
 
+echo ""
 echo "=== CSVLite Integration Tests ==="
 echo ""
 
@@ -86,10 +87,16 @@ test "ORDER BY descending" \
     "$BINARY --file $TEST_FILE --order-by age:desc" \
     "Should sort rows by age in descending order"
 
-# Test 5: Combined operations
-test "Combined: GROUP BY + ORDER BY + SELECT" \
-    "$BINARY --file $TEST_FILE --group-by department --order-by salary:desc --select name,department" \
-    "Should group by department, sort by salary desc, and show only name and department"
+# Test 5: WHERE operation
+test "WHERE operation" \
+    "$BINARY --file $TEST_FILE --where 'age>=25'" \
+    "Should filter rows by age >= 25"
+
+
+# Test 6: Combined operations
+test "Combined: WHERE + GROUP BY + ORDER BY + SELECT" \
+    "$BINARY --file $TEST_FILE --where 'age>=25' --group-by department --order-by salary:desc --select name,department" \
+    "Should filter rows by age >= 25, group by department, sort by salary desc, and show only name and department"
 
 # Test 6: Stdin input
 test "Stdin input" \

@@ -1,8 +1,8 @@
-/* Header file defining the interface for group-by operations in CSVLite.
- * Provides function declarations for grouping and future aggregation logic.
- *
- * Vivek Patel, November 11, 2025, v0.0.3
- */
+/*
+* AUTHOR: Vivek Patel
+* DATE: November 11, 2025
+* VERSION: v1.0.0
+*/
 
 #ifndef GROUP_H
 #define GROUP_H

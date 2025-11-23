@@ -1,3 +1,9 @@
+/*
+* AUTHOR: Nadeem Mohamed
+* DATE: November 17, 2025
+* VERSION: v1.0.0
+*/
+
 #ifndef WHERE_H
 #define WHERE_H
 

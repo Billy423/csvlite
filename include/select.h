@@ -1,3 +1,9 @@
+/*
+* AUTHOR: Nadeem Mohamed
+* DATE: November 10, 2025
+* VERSION: v1.0.0
+*/
+
 #ifndef SELECT_H
 #define SELECT_H
 

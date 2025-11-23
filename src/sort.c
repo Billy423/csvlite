@@ -1,11 +1,11 @@
 /*
  * Implements basic sorting for CSV rows using qsort().
- * Sorting is based on a specific column index. 
+ * Sorting is based on a specific column index.
  * The comparison function uses strcmp() on the cell strings.
  *
  * AUTHOR: Vivek Patel
  * DATE: November 17, 2025
- * VERSION: v0.0.3
+ * VERSION: v1.0.0
  */
 
 

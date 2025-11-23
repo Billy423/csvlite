@@ -1,12 +1,11 @@
 /*
  * Provides basic WHERE filtering for CSVlite.
  * Supports single conditions like age>=18 or name==Alice.
- *
  * Increment 1: single simple condition (no && / ||).
  *
  * AUTHOR: Nadeem Mohamed
  * DATE: November 17, 2025
- * VERSION: v0.1.0
+ * VERSION: v1.0.0
  */
 
 #include "../include/where.h"

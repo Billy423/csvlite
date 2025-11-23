@@ -1,12 +1,10 @@
-/**
- * row.c - Row data structure for storing CSV row data
- * 
+/*
  * Provides a structure to store a single CSV row with multiple cells.
  * Each cell value is stored as a dynamically allocated string.
- * 
+ *
  * AUTHOR: Billy
- * DATE: 2025-11-11
- * VERSION: v0.0.1
+ * DATE: November 11, 2025
+ * VERSION: v1.0.0
  */
 
 #include "../include/row.h"

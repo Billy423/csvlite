@@ -5,9 +5,8 @@ INCLUDES = -Iinclude
 TARGET = csvlite
 
 # Source files
-SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c src/where.c
+SOURCES = src/main.c src/cli.c src/csv.c src/row.c src/vec.c src/hmap.c src/select.c src/sort.c src/group.c src/where.c
 OBJECTS = $(SOURCES:.c=.o)
-TEST_SRC = tests/unit/vec_test.c tests/unit/csv_test.c
 
 # Unit tests configuration
 UNIT_TEST_DIR = tests/unit
@@ -23,7 +22,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Run all tests
-test: test-row test-vec test-hmap test-csv test-cli test-select test-where
+test: test-row test-vec test-hmap test-csv test-cli test-select test-sort test-group test-where
 
 
 # Special handling for vec which depends on row
@@ -54,7 +53,19 @@ test-select: $(UNIT_TEST_DIR)/select_test.c
 	@$(CC) $(CFLAGS) $(INCLUDES) -o test_select $< src/select.c src/vec.c src/row.c src/hmap.c
 	@./test_select
 	@rm -f test_select
- 
+
+# Test group 
+test-group: $(UNIT_TEST_DIR)/group_test.c
+	@echo "Building and running group tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_group $< src/group.c src/row.c src/vec.c src/hmap.c
+	@./test_group
+	@rm -f test_group
+# Test sort
+test-sort: $(UNIT_TEST_DIR)/sort_test.c
+	@echo "Building and running sort tests..."
+	@$(CC) $(CFLAGS) $(INCLUDES) -o test_sort $< src/sort.c src/vec.c src/row.c
+	@./test_sort
+	@rm -f test_sort
 
 # Special handling for where which depends on row and vec
 test-where: $(UNIT_TEST_DIR)/where_test.c
@@ -63,8 +74,6 @@ test-where: $(UNIT_TEST_DIR)/where_test.c
 	@./test_where
 	@rm -f test_where
 
-
-
 # Build and run individual unit test (e.g. make test-vec)
 test-%: $(UNIT_TEST_DIR)/%_test.c
 	@echo "Building and running $* tests..."
@@ -72,12 +81,14 @@ test-%: $(UNIT_TEST_DIR)/%_test.c
 	@./test_$*
 	@rm -f test_$*
 
+
 coverage:
 	@echo "Coverage not yet implemented"
+
 
 clean:
 	rm -f $(TARGET) $(OBJECTS)
 	rm -f test_* $(UNIT_TEST_DIR)/*.o src/*.o
 	rm -f *.gcno *.gcda *.gcov *.exe
 
-.PHONY: all test test-vec test-% coverage clean
+.PHONY: all test test-vec test-sort test-% coverage clean

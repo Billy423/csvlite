@@ -187,6 +187,30 @@ void test_vec_auto_resize(void) {
     printf("Test 6: vec_auto_resize() - Complete\n\n");
 }
 
+// Test 7: Get data pointer (new function)
+void test_vec_get_data(void) {
+    Vec *vec = vec_new(5);
+    TEST(vec != NULL, "vec_new() succeeds", "vec_new() fails");
+    
+    Row **data = vec_get_data(vec);
+    TEST(data != NULL, "vec_get_data() returns non-NULL", "vec_get_data() returns NULL");
+    
+    Row *row = row_new(1);
+    row_set_cell(row, 0, "test");
+    vec_push(vec, row);
+    
+    // verify data pointer points to same array
+    Row **data2 = vec_get_data(vec);
+    TEST(data == data2, "vec_get_data() returns consistent pointer", "vec_get_data() returns different pointer");
+    TEST(data[0] == row, "Data pointer points to correct row", "Data pointer points to incorrect row");
+    
+    TEST(vec_get_data(NULL) == NULL, "vec_get_data(NULL) returns NULL", "vec_get_data(NULL) returns != NULL");
+    
+    row_free(row);
+    vec_free(vec);
+    printf("Test 7: vec_get_data() - Complete\n\n");
+}
+
 int main(void) {
     printf("=== Vec Unit Tests ===\n\n");
     
@@ -197,6 +221,7 @@ int main(void) {
     test_vec_edge_cases();
     test_vec_different_capacities();
     test_vec_auto_resize();
+    test_vec_get_data();
     
     printf("=== Test Summary ===\n");
     printf("Tests run: %d\n", tests_run);
@@ -205,4 +230,3 @@ int main(void) {
     
     return (tests_run == tests_passed) ? 0 : 1;
 }
-

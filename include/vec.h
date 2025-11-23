@@ -25,6 +25,11 @@ size_t vec_length(const Vec *vec);
 // Get current capacity of vector
 size_t vec_capacity(const Vec *vec);
 
+// Get pointer to internal array (for sorting/advanced operations)
+// WARNING: Do not modify array size directly, only use vec_push/vec_free
+// - returns NULL if vec is NULL
+Row **vec_get_data(Vec *vec);
+
 // Free vector (does NOT free Row objects inside)
 // - does not free Row objects inside
 void vec_free(Vec *vec);

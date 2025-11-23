@@ -1,9 +1,12 @@
-/* Implements the group-by functionality for the CSVLite project.
+/*
+ * Implements the group-by functionality for the CSVLite project.
  * This module groups CSV rows by a specified column index. It uses
- * the Lead Developer’s hash map (hmap) to track unique column values
+ * the Lead Developer's hash map (hmap) to track unique column values
  * and returns a vector containing one representative row per group.
  *
- * Vivek Patel, November 11, 2025, v0.0.3
+ * AUTHOR: Vivek Patel
+ * DATE: November 11, 2025
+ * VERSION: v1.0.0
  */
 
 #include "group.h"

@@ -2,9 +2,7 @@ name: workflow
 
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
 
 jobs:
   build-and-test:
@@ -21,22 +19,11 @@ jobs:
     - name: Build
       run: make clean && make
     
-    - name: Run tests
-      run: make test > test_report.txt 2>&1 || echo "Tests not yet implemented"
-
-    - name: Generate coverage
-      run: make coverage > coverage_report.txt 2>&1 || echo "Coverage not yet implemented"
-
-    - name: Upload test report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-report
-        path: test_report.txt
-
-    - name: Upload coverage report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: coverage_report.txt
+    - name: Make test and coverage scripts executable
+      run: |
+        chmod +x tests/e2e/integration_test.sh scripts/generate_coverage.sh
+    
+    - name: Run unit tests
+      run: make unit-test 2>&1 | tee unit_test_report.txt || true
+    
+    - name: Run integration tes

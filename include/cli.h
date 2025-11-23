@@ -1,7 +1,7 @@
 /*
 * AUTHOR: Nikhil Ranjith
 * DATE: November 10, 2025
-* VERSION: v0.0.1
+* VERSION: v1.0.0
 */
 
 #ifndef CLI_H

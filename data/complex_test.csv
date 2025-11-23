@@ -1,0 +1,17 @@
+id,name,age,department,salary,active,notes
+1,Alice,25,Engineering,75000.50,true,Senior developer
+2,Bob,30,Sales,55000,true,Top performer
+3,Charlie,25,Engineering,80000.75,false,On leave
+4,Diana,28,Marketing,60000,true,Team lead
+5,Eve,25,Sales,52000,true,
+6,Frank,35,Engineering,95000,true,Manager
+7,Grace,22,Marketing,48000,false,Intern
+8,Henry,30,Sales,58000,true,
+9,Iris,27,Engineering,72000,true,New hire
+10,Jack,25,Marketing,51000,true,Part-time
+11,Karen,32,Sales,62000,true,Regional manager
+12,Liam,28,Engineering,78000,true,
+13,Maya,24,Marketing,49000,false,Contractor
+14,Noah,31,Sales,59000,true,
+15,Olivia,26,Engineering,71000,true,Remote worker
+

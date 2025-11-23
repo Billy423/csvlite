@@ -1,11 +1,11 @@
 /*
  * Implements basic sorting for CSV rows using qsort().
- * Sorting is based on a specific column index. 
+ * Sorting is based on a specific column index.
  * The comparison function uses strcmp() on the cell strings.
  *
  * AUTHOR: Vivek Patel
  * DATE: November 17, 2025
- * VERSION: v0.0.3
+ * VERSION: v1.0.0
  */
 
 
@@ -17,8 +17,9 @@
 #include <string.h>
 #include <stdio.h>
 
-// global temporary column index for comparator
+// global temporary variables for comparator
 static int g_sort_col = 0;
+static int g_sort_ascending = 1;  // 1 for ascending, 0 for descending
 
 /* Checks whether a C-string represents a valid integer literal.
  * Accepts optional leading '+' or '-' sign followed by digits.)
@@ -75,13 +76,17 @@ static int rowptr_compare(const void *a, const void *b) {
     int a_int = is_int_str(sa);
     int b_int = is_int_str(sb);
 
+    int result;
     if (a_int && b_int) {
         long ia = strtol(sa, NULL, 10);
         long ib = strtol(sb, NULL, 10);
-        return (ia > ib) - (ia < ib);
+        result = (ia > ib) - (ia < ib);
+    } else {
+        result = strcmp(sa, sb);
     }
-
-    return strcmp(sa, sb);
+    
+    // negate result if descending order
+    return g_sort_ascending ? result : -result;
 }
 
 /* Sorts rows by column and returns a new sorted vector.
@@ -90,12 +95,13 @@ static int rowptr_compare(const void *a, const void *b) {
  * PARAMETERS:
  *   rows      - Vec* of Row*
  *   col_index - column index to sort by 
+ *   ascending - 1 for ascending order, 0 for descending order
  *
  * RETURNS:
  *   A new Vec* containing the sorted rows.
  *   NULL on invalid input or memory failure.
  */
-Vec *sort_by_column(Vec *rows, int col_index) {
+Vec *sort_by_column(Vec *rows, int col_index, int ascending) {
     if (!rows || col_index < 0)
         return NULL;
 
@@ -145,6 +151,7 @@ Vec *sort_by_column(Vec *rows, int col_index) {
     }
 
     g_sort_col = col_index;
+    g_sort_ascending = ascending;
     qsort(tmp, len, sizeof(Row *), rowptr_compare);
 
     /* Build a NEW vector and push sorted pointers */

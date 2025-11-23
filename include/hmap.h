@@ -1,3 +1,9 @@
+/*
+* AUTHOR: Billy
+* DATE: November 11, 2025
+* VERSION: v1.0.0
+*/
+
 #ifndef HMAP_H
 #define HMAP_H
 

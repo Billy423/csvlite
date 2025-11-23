@@ -8,7 +8,7 @@
  *
  * AUTHOR: Nikhil Ranjith
  * DATE: November 16, 2025
- * VERSION: v0.0.1
+ * VERSION: v1.0.0
  */
 
 #include <stdio.h>

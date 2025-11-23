@@ -1,0 +1,15 @@
+col1,col2,col3,col4,col5,col6
+,empty,0,0.0,false,
+value1,value2,123,456.789,true,normal
+  spaced  ,  leading  ,999,999.99,false,trailing  
+duplicate,duplicate,25,25.5,true,same
+duplicate,duplicate,25,25.5,true,same
+single,unique,1,1.1,false,one
+A,B,1,2.0,true,alpha
+Z,Y,99,98.9,false,omega
+mixed123,456text,42,3.14159,true,alphanumeric
+verylongcolumnname,short,123456789,999999.999,false,description
+a,b,0,0.0,true,min
+z,y,999,999.9,false,max
+middle,middle,50,50.5,true,center
+

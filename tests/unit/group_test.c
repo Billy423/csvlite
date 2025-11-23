@@ -8,6 +8,7 @@
 #include "vec.h"
 #include "row.h"
 #include <assert.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -70,7 +71,14 @@ void test_group_by_column_unique() {
     assert(grouped != NULL);
     assert(vec_length(grouped) == 2);
 
-    printf("group_by_column(): PASS, correctly grouped to 2 groups\n");
+    /// clean up
+    for (size_t i = 0; i < vec_length(rows); i++) {
+        row_free(vec_get(rows, i));
+    }
+    vec_free(rows);
+    vec_free(grouped);
+
+    printf("Test 1: group_by_column() unique groups - Complete\n\n");
 }
 
 /* Entry point for the test program.
@@ -81,6 +89,14 @@ void test_group_by_column_unique() {
  *  EXIT_FAILURE, if any assertion fails
  */
 int main() {
+    printf("=== Group Unit Tests ===\n\n");
+    
     test_group_by_column_unique();
+    
+    printf("=== Test Summary ===\n");
+    printf("Tests run: 1\n");
+    printf("Tests passed: 1\n");
+    printf("Tests failed: 0\n");
+    
     return EXIT_SUCCESS;
 }

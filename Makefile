@@ -100,7 +100,7 @@ coverage: clean
 	@echo "Building main executable with coverage flags..."
 	@$(CC) $(CFLAGS) --coverage $(INCLUDES) -o $(TARGET) $(SOURCES)
 	@echo "Running integration tests to generate coverage for main.c..."
-	@bash tests/e2e/integration_test.sh > /dev/null 2>&1 || true
+	@bash tests/e2e/integration_test.sh 2>&1 || true
 	@echo ""
 	@echo "================================================"
 	@echo "Step 2: Tests executed (generated .gcda files)"

@@ -96,6 +96,56 @@ void test_cli_help(void) {
     TEST(g_help_flag == 1, "g_help_flag set with --help", "g_help_flag not set with --help");
 }
 
+// Test 7: Group-by and order-by arguments
+void test_cli_group_and_order(void) {
+    cli_init();
+    char* argv[] = { "csvlite", "--group-by", "city", "--order-by", "age:desc" };
+    int argc = 5;
+
+    int result = cli_parse_args(argc, argv);
+    TEST(result == 1, "cli_parse_args handles --group-by and --order-by", "cli_parse_args failed for group/order");
+    TEST(g_group_by_col != NULL && strcmp(g_group_by_col, "city") == 0,
+         "g_group_by_col set correctly", "g_group_by_col incorrect");
+    TEST(g_order_by_col != NULL && strcmp(g_order_by_col, "age:desc") == 0,
+         "g_order_by_col set correctly", "g_order_by_col incorrect");
+}
+
+// Test 8: Missing required value for option
+void test_cli_missing_file_value(void) {
+    cli_init();
+    char* argv[] = { "csvlite", "--file" };
+    int argc = 2;
+
+    int result = cli_parse_args(argc, argv);
+    TEST(result == 0, "cli_parse_args returns 0 when --file value missing", "cli_parse_args did not fail without file value");
+    TEST(g_file_path == NULL, "g_file_path remains NULL on parse error", "g_file_path unexpectedly set on error");
+}
+
+// Test 9: Unknown argument handling
+void test_cli_unknown_argument(void) {
+    cli_init();
+    char* argv[] = { "csvlite", "--unknown" };
+    int argc = 2;
+
+    int result = cli_parse_args(argc, argv);
+    TEST(result == 0, "cli_parse_args returns 0 for unknown argument", "cli_parse_args did not fail for unknown argument");
+}
+
+// Test 10: Cleanup resets pointers
+void test_cli_cleanup(void) {
+    cli_init();
+    char* argv[] = { "csvlite", "--file", "data.csv", "--select", "name" };
+    int argc = 5;
+
+    int result = cli_parse_args(argc, argv);
+    TEST(result == 1, "cli_parse_args succeeded before cleanup", "cli_parse_args failed before cleanup");
+
+    cli_cleanup();
+    TEST(g_file_path == NULL && g_select_cols == NULL && g_where_cond == NULL &&
+         g_group_by_col == NULL && g_order_by_col == NULL,
+         "cli_cleanup resets option pointers", "cli_cleanup did not reset option pointers");
+}
+
 int main(void) {
     printf("=== CLI Unit Tests ===\n\n");
 
@@ -105,6 +155,10 @@ int main(void) {
     // test_cli_where();
     test_cli_stdin();
     test_cli_help();
+    test_cli_group_and_order();
+    test_cli_missing_file_value();
+    test_cli_unknown_argument();
+    test_cli_cleanup();
 
     printf("\n=== Test Summary ===\n");
     printf("CLI Tests run: %d\n", tests_run);

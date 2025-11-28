@@ -1,3 +1,10 @@
+# This workflow performs automated build, testing, and coverage reporting for
+# the CSVLite project on every push and pull request.
+#
+# AUTHOR: Nadeem Mohamed
+# DATE:   November 28, 2025
+# VERSION: v2.0.0
+
 name: workflow
 
 on:
@@ -41,4 +48,11 @@ jobs:
           unit_test_report.txt
           integration_test_report.txt
           coverage_report.txt
+        retention-days: 30
+        
+    - name: Upload executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: csvlite-executable
+        path: csvlite
         retention-days: 30

@@ -9,8 +9,9 @@
 source_file="$1"
 source_basename=$(basename "$source_file" .c)
 
-# for modules, use pattern test_<module>-<module>
-# for main.c, use pattern csvlite-main (since it doesnt have a unit testing file)
+# Determine module-specific base name for gcov artifacts.
+# Modules follow test_<module>-<module> convention.
+# main.c uses csvlite-main because it has no dedicated unit test executable.
 if [ "$source_basename" = "main" ]; then
     base_name="csvlite-main"
 else
@@ -36,8 +37,10 @@ if [ -f "${base_name}.gcno" ] && [ -f "$gcda_file" ]; then
         fi
         echo "  $source_basename.c: $coverage_line"
     else
+            # gcov ran but returned no usable coverage info.
         echo "  $source_basename.c: No coverage data found"
     fi
 else
+    # gcov data files were not generated for this module.
     echo "  $source_basename.c: No coverage data found"
 fi

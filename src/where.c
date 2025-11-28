@@ -293,12 +293,6 @@ static int matches_condition(
 /*
  * Filters rows using a single WHERE condition, like "age>=18" or "name==Alice".
  *
- * MEMORY OWNERSHIP:
- * - Returns a new Vec* that the caller must free with vec_free()
- * - Reuses Row* pointers from input (does NOT copy Row objects)
- * - Caller must free Row objects separately (they are shared with input Vec)
- * - Does NOT free the input Vec or Row objects
- *
  * PARAMETERS:
  *  - rows: vector of Row*, row 0 is assumed to be the header row
  *  - condition: where expression from CLI (format: "<column><op><value>")

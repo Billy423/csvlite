@@ -1,3 +1,12 @@
+/*
+* Tests to verify select clauses
+*
+*
+* AUTHOR: Nadeem Mohamed
+* DATE: November 23, 2025
+* VERSION: v0.0.1
+*/
+
 #include "../../include/select.h"
 #include "../../include/row.h"
 #include "../../include/vec.h"

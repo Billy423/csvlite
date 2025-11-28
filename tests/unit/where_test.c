@@ -1,3 +1,13 @@
+/*
+* Tests to verify where clauses
+*
+*
+* AUTHOR: Nadeem Mohamed
+* DATE: November 23, 2025
+* VERSION: v0.0.1
+*/
+ 
+
 #include "../../include/where.h"
 #include "../../include/row.h"
 #include "../../include/vec.h"

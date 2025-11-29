@@ -1,13 +1,14 @@
 /*
  * Provides WHERE filtering
  * Supports single conditions like age>=18 or name==Alice.
-* where <column> can be a numeric column index ("0", "1", …) or a header
+ * where <column> can be a numeric column index ("0", "1", …) or a header
  * name ("age", "name", …), and <op> is one of: ==, !=, >=, <=, >, <.
  * The module parses the condition, locates the target column, and returns
  * a new Vec* containing only the filetered rows
+ * 
  * AUTHOR: Nadeem Mohamed
  * DATE: November 17, 2025
- * VERSION: v1.0.0
+ * VERSION: v2.0.0
  */
 
 #include "../include/where.h"

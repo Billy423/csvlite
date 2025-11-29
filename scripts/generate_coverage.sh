@@ -2,9 +2,11 @@
 # Generate coverage report for a specific source file
 # Usage: generate_coverage.sh <source_file>
 # Example: generate_coverage.sh src/hmap.c
-# Author: Billy Wu
+#
+# Author: Nadeem Mohamed, Vivek Patel
 # Date: November 23, 2025
-# Version: v1.0.0
+# Version: v2.0.0
+#######################################################
 
 source_file="$1"
 source_basename=$(basename "$source_file" .c)

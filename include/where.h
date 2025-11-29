@@ -2,7 +2,7 @@
 * Header file for where.c
 * AUTHOR: Nadeem Mohamed
 * DATE: November 17, 2025
-* VERSION: v1.0.0
+* VERSION: v2.0.0
 */
 
 #ifndef WHERE_H

@@ -1,7 +1,8 @@
 # CSVlite - Command-Line CSV Analytics Tool
 
 **SFWRENG 2XC3**  
-**Team 21 - MacSQL**
+**Team 21 - MacSQL**  
+**Increment 1 - ✅ COMPLETED (Lab 11.2)**
 
 CSVlite is a Linux command-line utility for performing SQL-like operations (select, filter, group-by, sort) on CSV files. Built with C and designed for efficiency.
 
@@ -14,11 +15,50 @@ make
 # View help
 ./csvlite --help
 
-# Example - select, filter and sort
+# Example - select, filter, group, and sort
 ./csvlite --file data.csv \
     --select name,age \
-    --where 'age>=18' \
+    --where 'age>=25' \
+    --group-by department \
     --order-by age:desc
+```
+
+## Features
+
+### Column Selection
+Select specific columns by name or numeric index:
+```bash
+./csvlite --file data.csv --select name,age
+./csvlite --file data.csv --select 0,1  # Using numeric indices
+```
+
+### Row Filtering
+Filter rows based on conditions:
+```bash
+./csvlite --file data.csv --where 'age>=25'
+./csvlite --file data.csv --where 'salary>50000'
+```
+
+### Grouping
+Group rows by a column:
+```bash
+./csvlite --file data.csv --group-by department
+./csvlite --file data.csv --group-by 2  # Using numeric index
+```
+
+### Sorting
+Sort rows in ascending or descending order:
+```bash
+./csvlite --file data.csv --order-by age
+./csvlite --file data.csv --order-by age:desc
+./csvlite --file data.csv --order-by salary:asc
+```
+
+### Input from stdin
+Read CSV data from standard input:
+```bash
+cat data.csv | ./csvlite -
+echo "name,age\nAlice,25" | ./csvlite - --select name
 ```
 
 ## Requirements
@@ -31,10 +71,29 @@ make
 ## Building
 
 ```bash
-make          # Build the application
-make test     # Run tests
-make coverage # Generate coverage report
-make clean    # Remove build artifacts
+make                # Build the application
+make test           # Run all tests (unit + integration)
+make test-unit      # Run unit tests only
+make test-e2e       # Run integration tests only
+make coverage       # Generate coverage report
+make clean          # Remove build artifacts
+```
+
+## Testing
+
+The project includes comprehensive testing:
+
+- **Unit Tests:** Individual module tests in `tests/unit/`
+- **Integration Tests:** 34 end-to-end tests in `tests/e2e/`
+- **Coverage:** Automated coverage reporting via `make coverage`
+- **CI/CD:** Automated testing on every push via GitHub Actions
+
+Run tests:
+```bash
+make test              # Run all tests
+make test-unit         # Unit tests only
+make test-e2e          # Integration tests only
+make coverage          # Generate coverage reports
 ```
 
 ## Project Structure

@@ -3,6 +3,7 @@
 **Project:** CSVLite - Command-Line CSV Analytics Tool  
 **Course:** SFWRENG 2XC3  
 **Team:** Team 21 - MacSQL
+**Last Revised:** November 26
 
 ---
 
@@ -69,8 +70,8 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 - `--help` flag must provide complete usage information
 
 **Development Time:**
-- Increment 1 (Lab 11.2): Basic functionality (select, where, basic I/O)
-- Increment 2 (Lab 12.2): Advanced features (group-by, sorting)
+- Increment 1 (Lab 11.2): Core functionality (select, where, group-by, order-by, basic I/O) ✅ **COMPLETED**
+- Increment 2 (Lab 12.2): Advanced features (logical operators, quoted fields, optimizations)
 - Limited to course timeline and team availability
 
 **Resources:**
@@ -205,45 +206,78 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 ## 5. The Increments
 
 ### Increment 1: Core Functionality
-**Target Date: Lab 11.2**
+**Target Date: Lab 11.2**  
+**Status: COMPLETED**
 
 **Overall Goal:** Basic CSV processing with select and where operations
 
 #### Lead Developer Contributions:
-- `vec.c/h` and `hmap.c/h` - Working data structures with tests
-- `main.c` - Minimal orchestration to run the program
-- `Makefile` - Build system for the project
-- Interface definitions (header files)
+- `vec.c/h` and `hmap.c/h` - Working data structures with tests ✅
+- `main.c` - Full orchestration integrating all modules ✅
+- `Makefile` - Complete build system with test and coverage targets ✅
+- Interface definitions (header files) ✅
+- `row.c/h` - Row data structure implementation ✅
 
 #### CLI/I/O Owner Contributions:
-- `csv.c/h` - Read CSV files
-- `row.c/h` - Store row data
-- `cli.c/h` - Parse command-line arguments with full validation
-- Basic output formatting
-- Unit tests for I/O modules
+- `csv.c/h` - Read CSV files from disk and stdin ✅
+- `row.c/h` - Store row data (collaborated with Lead) ✅
+- `cli.c/h` - Parse command-line arguments with full validation ✅
+- Complete output formatting ✅
+- Unit tests for I/O modules ✅
 
 #### Query Operations Team Member 1 (Nadeem) Contributions:
-- `select.c/h` - Column selection (by name and index)
-- `where.c/h` - Basic where clause (single conditions like `age>=18`)
-- Unit tests for select and where
-- GitHub Actions CI/CD pipeline setup
-- Utility scripts for coverage and testing (collaborate with Member 2)
+- `select.c/h` - Column selection (by name and numeric index) ✅
+- `where.c/h` - Basic where clause (single conditions like `age>=18`) ✅
+- Unit tests for select and where ✅
+- GitHub Actions CI/CD pipeline setup ✅
+- Utility scripts for coverage and testing ✅
 
 #### Query Operations Team Member 2 (Vivek) Contributions:
-- `group.c/h` - Basic group-by operation
-- `sort.c/h` - Basic sorting using `qsort()`
-- Unit tests for group and sort
-- End-to-end test scripts
-- Utility scripts for coverage and testing (collaborate with Member 1)
+- `group.c/h` - Basic group-by operation ✅
+- `sort.c/h` - Basic sorting using `qsort()` with ascending/descending support ✅
+- Unit tests for group and sort ✅
+- End-to-end test scripts (34 integration tests) ✅
+- Utility scripts for coverage and testing ✅
 
 **Increment 1 Success Criteria:**
-- Can read a CSV file
-- Can select specific columns
-- Can filter rows with basic conditions
-- `--help` works
-- All tests pass
-- No memory leaks
-- Test coverage ≥70%
+- ✅ Can read a CSV file (from disk and stdin)
+- ✅ Can select specific columns (by name and numeric index)
+- ✅ Can filter rows with basic conditions
+- ✅ Can group rows by column
+- ✅ Can sort rows by column (ascending/descending)
+- ✅ `--help` works and provides complete usage information
+- ✅ All tests pass (unit and integration)
+- ✅ No memory leaks detected
+- ✅ Test coverage >85% for main.c, >70% overall
+
+---
+
+### 📝 Increment 1 Revisions (Based on Experience)
+
+**REVISION 1: Scope Expansion**
+- **Change:** GROUP BY and ORDER BY completed in Increment 1 (originally planned for Increment 2)
+- **Reason:** Team members completed modules ahead of schedule
+- **Impact:** More feature-complete foundation for Increment 2
+
+**REVISION 2: Test Coverage Goals**
+- **Change:** Achieved >85% coverage for main.c (exceeded ≥70% target)
+- **Reason:** Prioritized comprehensive integration testing
+- **Impact:** Higher code quality confidence
+
+**REVISION 3: ORDER BY Direction Syntax**
+- **Change:** Added explicit direction syntax (`--order-by age:asc`/`:desc`)
+- **Reason:** Better user experience and SQL-like behavior
+- **Impact:** More intuitive sorting capabilities
+
+**REVISION 4: Integration Testing**
+- **Change:** Expanded to 34 comprehensive tests covering error paths and edge cases
+- **Reason:** Need for robust error handling coverage
+- **Impact:** Improved reliability and debugging
+
+**REVISION 5: CI/CD Pipeline**
+- **Change:** Full CI/CD with automated build, tests, and coverage reporting
+- **Reason:** Incremental delivery requirements
+- **Impact:** Automated quality checks and easier collaboration
 
 ---
 

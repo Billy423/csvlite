@@ -1,7 +1,16 @@
+# Makefile for CSVlite project
+# 
+# AUTHOR: Team 21
+# DATE: November 29, 2025
+# VERSION: v2.0.0
+#################################
+
+# Compiler and flags
 CC = gcc
 CFLAGS = -std=c11 -Wall -Wextra -Werror
 INCLUDES = -Iinclude
 
+# Target executable
 TARGET = csvlite
 
 # Source files
@@ -11,6 +20,7 @@ OBJECTS = $(SOURCES:.c=.o)
 # Unit tests configuration
 UNIT_TEST_DIR = tests/unit
 
+# Main application build target
 all: $(TARGET)
 
 # Main application
@@ -49,7 +59,7 @@ test-cli: $(UNIT_TEST_DIR)/cli_test.c
 	@./test_cli
 	@rm -f test_cli
 
-# Special handling for select which depends on row, vec, and hmap
+# Test select
 test-select: $(UNIT_TEST_DIR)/select_test.c
 	@echo "================================================"
 	@echo "Building and running select tests..."
@@ -73,7 +83,7 @@ test-sort: $(UNIT_TEST_DIR)/sort_test.c
 	@./test_sort
 	@rm -f test_sort
 
-# Special handling for where which depends on row and vec
+# Test where
 test-where: $(UNIT_TEST_DIR)/where_test.c
 	@echo "================================================"
 	@echo "Building and running where tests..."
@@ -81,7 +91,7 @@ test-where: $(UNIT_TEST_DIR)/where_test.c
 	@./test_where
 	@rm -f test_where
 
-# Build and run individual unit test (e.g. make test-vec)
+# Test general module
 test-%: $(UNIT_TEST_DIR)/%_test.c
 	@echo "================================================"
 	@echo "Building and running $* tests..."
@@ -117,15 +127,17 @@ coverage: clean
 	@echo "Coverage reports generated. Check coverage_reports/ directory for .gcov files."
 
 
+# Clean build artifacts
 clean:
 	rm -f $(TARGET) $(OBJECTS)
 	rm -f test_* $(UNIT_TEST_DIR)/*.o src/*.o
 	rm -f *.gcno *.gcda *.gcov *.exe
 	rm -rf coverage_reports
 
-# Integration tests
+# Run integration tests
 test-e2e: $(TARGET)
 	@echo "Running integration tests..."
 	@bash tests/e2e/integration_test.sh
 
+# Phony targets
 .PHONY: all test test-vec test-sort test-% test-e2e coverage clean

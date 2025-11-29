@@ -4,21 +4,21 @@
  *
  * AUTHOR: Billy Wu, Nikhil Ranjith
  * DATE: November 21, 2025
- * VERSION: v1.0.0
+ * VERSION: v2.0.0
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "vec.h"
-#include "row.h"
-#include "csv.h"
-#include "cli.h"
-#include "select.h"   
-#include "where.h"    
-#include "group.h"
-#include "sort.h"
-#include "hmap.h"
+#include "../include/vec.h"
+#include "../include/row.h"
+#include "../include/csv.h"
+#include "../include/cli.h"
+#include "../include/select.h"   
+#include "../include/where.h"    
+#include "../include/group.h"
+#include "../include/sort.h"
+#include "../include/hmap.h"
 
 /*
  * Builds a hash map from column names to indices using the header row

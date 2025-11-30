@@ -1,3 +1,11 @@
+/*
+* Unit tests for hash map data structure
+*
+* AUTHOR: Billy Wu
+* DATE: November 30, 2025
+* VERSION: v2.0.0
+*/
+
 #include "../../include/hmap.h"
 #include <stdio.h>
 #include <stdlib.h>

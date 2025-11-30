@@ -1,10 +1,9 @@
 /*
 * Tests to verify select clauses
 *
-*
 * AUTHOR: Nadeem Mohamed
 * DATE: November 23, 2025
-* VERSION: v0.0.1
+* VERSION: v2.0.0
 */
 
 #include "../../include/select.h"

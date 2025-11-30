@@ -1,3 +1,11 @@
+/*
+* Unit tests for vector data structure
+*
+* AUTHOR: Billy Wu
+* DATE: November 30, 2025
+* VERSION: v2.0.0
+*/
+
 #include "../../include/vec.h"
 #include "../../include/row.h"
 #include <stdio.h>

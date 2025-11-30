@@ -9,9 +9,9 @@
  * VERSION: v2.0.0
  */
 
-#include "group.h"
-#include "vec.h"
-#include "row.h"
+#include "../../include/group.h"
+#include "../../include/vec.h"
+#include "../../include/row.h"
 #include <assert.h>
 #include <stddef.h>
 #include <stdio.h>

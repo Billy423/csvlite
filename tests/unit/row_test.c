@@ -1,3 +1,11 @@
+/*
+* Unit tests for row data structure
+*
+* AUTHOR: Billy Wu
+* DATE: December 1, 2025
+* VERSION: v2.0.0
+*/
+
 #include "../../include/row.h"
 #include <stdio.h>
 #include <stdlib.h>

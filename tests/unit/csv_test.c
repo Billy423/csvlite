@@ -3,7 +3,7 @@
 *
 * AUTHOR: Nikhil Ranjith
 * DATE: November 10, 2025
-* VERSION: v0.0.1
+* VERSION: v2.0.0
 */
 
 #include "../../include/csv.h"

@@ -2,7 +2,8 @@
 
 **SFWRENG 2XC3**  
 **Team 21 - MacSQL**  
-**Increment 1 - ✅ COMPLETED (Lab 11.2)**
+**Version: v2.0.0**  
+**Status: COMPLETED (Lab 12.2)**
 
 CSVlite is a Linux command-line utility for performing SQL-like operations (select, filter, group-by, sort) on CSV files. Built with C and designed for efficiency.
 
@@ -121,4 +122,11 @@ make coverage          # Generate coverage reports
 
 ## Documentation
 
-- **[Development Plan](development_plan.md)** - Complete project planning document (Lab 9.2 deliverable)
+- **[Development Plan](development_plan.md)** - Complete project planning document with increment details
+- All source files include comprehensive function documentation following consistent style
+- Memory ownership and behavior documented for all functions
+
+## Version History
+
+- **v2.0.0** (Lab 12.2) - Final release: Comprehensive documentation and code quality improvements
+- **v1.0.0** (Lab 11.2) - Initial release: Core functionality (select, where, group-by, order-by)

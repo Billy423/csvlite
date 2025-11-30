@@ -3,7 +3,7 @@
 **Project:** CSVLite - Command-Line CSV Analytics Tool  
 **Course:** SFWRENG 2XC3  
 **Team:** Team 21 - MacSQL
-**Last Revised:** November 26
+**Last Revised:** December 2025
 
 ---
 
@@ -71,7 +71,7 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 
 **Development Time:**
 - Increment 1 (Lab 11.2): Core functionality (select, where, group-by, order-by, basic I/O) ✅ **COMPLETED**
-- Increment 2 (Lab 12.2): Advanced features (logical operators, quoted fields, optimizations)
+- Increment 2 (Lab 12.2): Documentation, code quality, and final polish ✅ **COMPLETED**
 - Limited to course timeline and team availability
 
 **Resources:**
@@ -113,7 +113,7 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 - Makefile that builds and tests the entire project
 - Header files that define interfaces for other teams to use
 - Integration testing to ensure everything works together
-- Advanced where clause with logical operators (`&&`, `||`) in Increment 2
+- Comprehensive documentation for all owned modules (Increment 2)
 
 **Code worked on together:**
 - Integration points between modules
@@ -141,6 +141,7 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 - Output formatting to display results
 - Unit tests for all I/O modules
 - End-to-end tests for basic file operations
+- Comprehensive documentation for all owned modules (Increment 2)
 
 **Code worked on together:**
 - Integration with Lead's data structures
@@ -169,6 +170,7 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 - Unit tests for select and where modules
 - GitHub Actions CI/CD pipeline setup
 - Utility scripts for test coverage and benchmarking
+- Comprehensive documentation for all owned modules (Increment 2)
 
 **Code worked on together:**
 - Integration with CLI/I/O module
@@ -195,6 +197,7 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 - Integration with Lead's `vec` and `hmap` data structures
 - Unit tests for group and sort modules
 - End-to-end test scripts
+- Comprehensive documentation for all owned modules (Increment 2)
 
 **Code worked on together:**
 - Integration with CLI/I/O module
@@ -252,7 +255,7 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 
 ---
 
-### 📝 Increment 1 Revisions (Based on Experience)
+### Increment 1 Revisions (Based on Experience)
 
 **REVISION 1: Scope Expansion**
 - **Change:** GROUP BY and ORDER BY completed in Increment 1 (originally planned for Increment 2)
@@ -281,39 +284,57 @@ Users are expected to have basic familiarity with command-line tools and CSV fil
 
 ---
 
-### Increment 2: Advanced Operations
-**Target Date: Lab 12.2**
+### Increment 2: Documentation & Code Quality
+**Target Date: Lab 12.2**  
+**Status: COMPLETED**
 
-**Overall Goal:** Enhanced features including advanced filtering
+**Overall Goal:** Comprehensive documentation and code quality improvements
+
+**Note:** Increment 2 focused on documentation rather than new features, as core functionality was already complete and well-tested.
 
 #### Lead Developer Contributions:
-- Advanced where clause (logical operators: `&&`, `||`) - taking over from Query team
-- Optimized DSA implementations
-- Enhanced interfaces for Query team
-- Optimized build system
+- Comprehensive documentation for `vec.c/h`, `hmap.c/h`, `row.c/h`, `main.c` ✅
+- Documented orchestration logic and memory ownership ✅
+- Updated all file headers to v2.0.0 ✅
 
 #### CLI/I/O Owner Contributions:
-- Enhanced CSV parsing (quoted fields, escaped quotes)
-- Improved output formatting options
-- Better error messages
+- Comprehensive documentation for `csv.c/h` and `cli.c/h` ✅
+- Documented parsing logic and error handling ✅
+- Updated file headers to v2.0.0 ✅
 
 #### Query Operations Team Member 1 (Nadeem) Contributions:
-- Enhanced select (column aliasing, computed columns)
-- Hand over where.c/h to Lead Developer for advanced features
-- Complete unit tests for select (≥80% coverage)
-- Optimized CI/CD pipeline
+- Comprehensive documentation for `select.c/h` and `where.c/h` ✅
+- Documented filtering logic and memory ownership ✅
+- Updated file headers to v2.0.0 ✅
 
 #### Query Operations Team Member 2 (Vivek) Contributions:
-- Enhanced group-by (grouping structure - returns one representative row per group)
-- Enhanced sort (multiple columns, ascending/descending)
-- Complete unit tests for group and sort (≥80% coverage)
-- Comprehensive E2E test scripts
-- Performance benchmarks
+- Comprehensive documentation for `group.c/h` and `sort.c/h` ✅
+- Documented grouping and sorting behavior ✅
+- Updated file headers to v2.0.0 ✅
 
 **Increment 2 Success Criteria:**
-- All operations working (select, where, group-by, order-by)
-- Quoted CSV fields supported
-- Group-by grouping structure working
-- Advanced where clauses
-- Test coverage ≥80%
-- Performance benchmarks completed
+- ✅ All source files have comprehensive function documentation (following `row.c`/`hmap.c` style)
+- ✅ All file headers updated to v2.0.0
+- ✅ Function comments document behavior, edge cases, and memory ownership
+- ✅ All tests passing (unit and integration)
+- ✅ Test coverage >70% (main.c >85%)
+- ✅ Group reflection report completed
+
+---
+
+### Increment 2 Revisions (Based on Experience)
+
+**REVISION 1: Focus Shift to Documentation**
+- **Change:** Increment 2 focused on documentation and code quality rather than advanced features
+- **Reason:** Core functionality complete; documentation prioritized for final delivery
+- **Impact:** Production-ready codebase with comprehensive documentation
+
+**REVISION 2: Documentation Standards**
+- **Change:** Established consistent documentation style
+- **Reason:** Need for uniform code documentation across all modules
+- **Impact:** Improved code readability and maintainability
+
+**REVISION 3: Function Behavior Documentation**
+- **Change:** Enhanced function comments to document behavior (how it works, edge cases, memory management) rather than just purpose
+- **Reason:** Better understanding for future maintenance and debugging
+- **Impact:** Reduced cognitive load when reading and modifying code

@@ -1,14 +1,12 @@
 /*
- * Provides functions for parsing command-line arguments.
- * Handles options:
- *   --file <file>     : CSV file to process (or use - for stdin)
- *   --select <cols>   : Columns to select (e.g., name,age)
- *   --where <cond>    : Filter condition (e.g., age>=18)
- *   --help            : Display help message
+ * Parses command line arguments and stores them for the CSVlite tool.
+ * Supports file/stdin input, column selection, filtering, grouping, and sorting.
+ * --order-by accepts "col", "col:asc", "col:desc", or numeric indices (e.g., 1:desc).
+ * --group-by accepts column names or numeric indices. "-" enables stdin.
  *
  * AUTHOR: Nikhil Ranjith
- * DATE: November 16, 2025
- * VERSION: v1.0.0
+ * DATE: November 30, 2025
+ * VERSION: v2.0.0
  */
 
 #include <stdio.h>
@@ -24,6 +22,12 @@ int g_use_stdin = 0;
 char* g_group_by_col = NULL;
 char* g_order_by_col = NULL;
 
+/*
+ * Resets all CLI option globals to their default unset state.
+ * Parameters: none
+ * Returns: void
+ * Side effects: clears previously parsed argument values.
+ */
 void cli_init(void) {
     g_file_path = NULL;
     g_select_cols = NULL;
@@ -34,6 +38,12 @@ void cli_init(void) {
     g_order_by_col = NULL;
 }
 
+/*
+ * Prints usage information for the CSVlite command line tool.
+ * Parameters: none
+ * Returns: void
+ * Side effects: writes help text to stdout.
+ */
 void cli_print_help(void) {
     printf("CSVlite - Command-Line CSV Analytics Tool\n");
     printf("\n");
@@ -41,10 +51,10 @@ void cli_print_help(void) {
     printf("\n");
     printf("Options:\n");
     printf("  --file <file>     CSV file to process (or use - for stdin)\n");
-    printf("  --select <cols>   Columns to select (e.g. name,age)\n");
+    printf("  --select <cols>   Columns to select (e.g. name,age or 0,1)\n");
     printf("  --where <cond>    Filter condition (e.g. age>=18)\n");
-    printf("  --group-by <col>  Column to group by (e.g. name)\n");
-    printf("  --order-by <col>  Column to order by (e.g. age)\n");
+    printf("  --group-by <col>  Column name or index to group by (e.g. department or 2)\n");
+    printf("  --order-by <col>  Column to order by; supports name or index, optional :asc/:desc (defaults asc)\n");
     printf("  --help            Show this help message\n");
     printf("\n");
     printf("Examples:\n");
@@ -55,6 +65,15 @@ void cli_print_help(void) {
     printf("\n");
 }
 
+/*
+ * Parses command line arguments and populates module level option variables.
+ * Parameters: argc (argument count)
+ *             argv (argument vector)
+ * Returns: 1 on success
+ *          0 on invalid input
+ *          -1 when --help is requested
+ * Side effects: sets global pointers/flags used by the application. Does not allocate.
+ */
 int cli_parse_args(int argc, char* argv[]) {
     for (int i = 1; i < argc; i++) {
 
@@ -115,6 +134,12 @@ int cli_parse_args(int argc, char* argv[]) {
     return 1;
 }
 
+/*
+ * Clears parsed CLI option pointers after use.
+ * Parameters: none
+ * Returns: void
+ * Side effects: resets globals to NULL/defaults without freeing memory.
+ */
 void cli_cleanup(void) {
     g_file_path = NULL;
     g_select_cols = NULL;

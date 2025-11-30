@@ -1,7 +1,15 @@
 /*
 * AUTHOR: Nikhil Ranjith
-* DATE: November 10, 2025
-* VERSION: v1.0.0
+* DATE: November 30, 2025
+* VERSION: v2.0.0
+*
+* Parses CLI options for CSVlite and exposes globals for the parsed values.
+* Supported forms:
+*   --file <path> | - (stdin)
+*   --select name,age or numeric indices (0,2)
+*   --where expressions like age>=18
+*   --group-by <name|index>
+*   --order-by <name|index[:asc|:desc]> (defaults to asc)
 */
 
 #ifndef CLI_H

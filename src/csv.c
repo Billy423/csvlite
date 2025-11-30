@@ -1,14 +1,18 @@
 /*
- * Provides functions for reading and writing CSV files.
- *   - Reads CSV data into vectors of rows
- *   - Writes CSV data from vectors of rows to stdout or files
- *   - Validating columns for SELECT operations
-  * This module works closely with row.c and vec.c to represent
+ * Provides utilities for reading CSV input and writing CSV output.
+ * Reads CSV data into vectors of rows, writes CSV data to stdout or files,
+ * and validates column selections used by CLI options.
+ * Parsing behavior:
+ *   Strips trailing newline
+ *   Trims whitespace around tokens
+ *   Counts commas to size the row and fills missing trailing cells with ""
+ *   Returns NULL on allocation or parsing failure
+ * This module works closely with row.c and vec.c to represent
  * CSV rows and collections of rows in memory.
  *
  * AUTHOR: Nikhil Ranjith
- * DATE: November 16, 2025
- * VERSION: v1.0.0
+ * DATE: November 30, 2025
+ * VERSION: v2.0.0
  */
 
 #include <stdlib.h>
@@ -16,15 +20,19 @@
 #include <ctype.h>
 #include "../include/csv.h"
 
-/* Helper: trim leading/trailing spaces/tabs */
+/* Helper: trim leading/trailing spaces/tabs in place.
+ * Parameters: s (string to trim)
+ * Returns: void
+ * Side effects: modifies the provided string buffer.
+ */
 static void trim_inplace(char *s) {
     if (!s) return;
-    /* trim left */
+    // trim left
     char *start = s;
     while (*start && (*start == ' ' || *start == '\t')) start++;
     if (start != s) memmove(s, start, strlen(start) + 1);
 
-    /* trim right */
+    // trim right
     size_t len = strlen(s);
     while (len > 0 && (s[len - 1] == ' ' || s[len - 1] == '\t')) {
         s[len - 1] = '\0';
@@ -32,7 +40,14 @@ static void trim_inplace(char *s) {
     }
 }
 
-/* Implementation: read CSV into Vec<Row*> */
+/* Reads CSV data from a FILE* into a Vec of Row pointers.
+ * Parameters: input (to read from)
+ * Returns: pointer to Vec on success
+ *          NULL on allocation or parse failure
+ * Side effects: Allocates rows/strings, caller owns the returned Vec and rows.
+ * Behavior: strips trailing newline, trims each token, pads missing trailing
+ * columns with empty strings, and aborts (NULL) if any allocation fails.
+ */
 Vec* csv_read(FILE *input) {
     if (input == NULL) return NULL;
 
@@ -43,16 +58,16 @@ Vec* csv_read(FILE *input) {
 
     while (fgets(line, sizeof(line), input)) {
         size_t len = strlen(line);
-        /* remove newline */
+        //remove newline
         if (len > 0 && line[len - 1] == '\n') {
             line[len - 1] = '\0';
             len--;
         }
 
-        /* skip empty lines */
+        //skip empty lines
         if (len == 0) continue;
 
-        /* count commas to determine number of columns */
+        // count commas to determine number of columns
         int num_cols = 1;
         for (size_t i = 0; i < len; i++) {
             if (line[i] == ',') num_cols++;
@@ -60,7 +75,7 @@ Vec* csv_read(FILE *input) {
 
         Row *row = row_new(num_cols);
         if (row == NULL) {
-            /* cleanup */
+            //cleanup
             vec_free(rows);
             return NULL;
         }
@@ -80,7 +95,7 @@ Vec* csv_read(FILE *input) {
         while (tok != NULL && col < num_cols) {
             trim_inplace(tok);
             if (row_set_cell(row, col, tok) != 0) {
-                /* CLEANUP IF row_set_cell FAILS */
+                //CLEANUP IF row_set_cell FAILS
                 free(tmp);
                 row_free(row);
 
@@ -92,7 +107,7 @@ Vec* csv_read(FILE *input) {
             col++;
             tok = strtok(NULL, ",");
         }
-        /* if fewer tokens than num_cols, set remaining to empty string */
+        // if fewer tokens than num_cols, set remaining to empty string
         while (col < num_cols) {
             row_set_cell(row, col, "");
             col++;
@@ -101,9 +116,9 @@ Vec* csv_read(FILE *input) {
         free(tmp);
 
         if (vec_push(rows, row) != 0) {
-            /* cleanup on failure */
+            // cleanup on failure
             row_free(row);
-            /* free previously pushed rows */
+            // free previously pushed rows
             for (size_t i = 0; i < vec_length(rows); ++i) row_free(vec_get(rows, i));
             vec_free(rows);
             return NULL;
@@ -113,7 +128,12 @@ Vec* csv_read(FILE *input) {
     return rows;
 }
 
-/* Helper: determine if token is all digits (non-empty) */
+/* Determine if a token is a non empty numeric string.
+ * Parameters: tok (token to examine)
+ * Returns: 1 if token is numeric
+ *          0 otherwise
+ * Side effects: none.
+ */
 static int is_number_token(const char *tok) {
     if (!tok || *tok == '\0') return 0;
     for (const char *p = tok; *p; ++p) {
@@ -122,8 +142,12 @@ static int is_number_token(const char *tok) {
     return 1;
 }
 
-/*  checks each comma-separated token exists as a numeric index within range [0..n-1]
- *  or as  header name matching one of header's cells
+/* Validates that each comma-separated token is a valid column index or name.
+ * Parameters: header (Row containing column names)
+ *             selected_cols (comma list)
+ * Returns: 0 on success
+ *          -1 on invalid input
+ * Side effects: allocates a temporary copy of the selection string.
  */
 int csv_validate_columns(Row* header, const char* selected_cols) {
     if (header == NULL || selected_cols == NULL) return -1;
@@ -161,7 +185,14 @@ int csv_validate_columns(Row* header, const char* selected_cols) {
     return 0;
 }
 
-// parse selected_cols into integer index array 
+/* Parses selected_cols into integer indices relative to the header row.
+ * Parameters: header (Row with column names)
+ *             selected_cols (comma list)
+ *             out_indices (output array allocated on success)
+ * Returns: count of indices on success
+ *          -1 on failure
+ * Side effects: allocates the indices array and a temporary copy string.
+ */
 static int parse_selected_indices(Row* header, const char* selected_cols, int **out_indices) {
     if (!header || !selected_cols || out_indices == NULL) return -1;
 
@@ -207,8 +238,15 @@ static int parse_selected_indices(Row* header, const char* selected_cols, int **
     return count;
 }
 
-/* Write CSV rows.
- * Returns 0 on success, -1 on error.
+/* Writes CSV rows to the provided FILE*, optionally selecting specific columns.
+ * Parameters: output (destination FILE*)
+ *             rows (Vec of Row pointers)
+ *             selected_cols (comma list or NULL for all columns)
+ * Returns: 0 on success
+ *          -1 on error
+ * Side effects: writes to the output stream and allocates temporary index array.
+ * Selection syntax: accepts column names or numeric indices (comma-separated)
+ * validates against the header and returns -1 on invalid selection.
  */
 int csv_write(FILE* output, Vec* rows, const char* selected_cols) {
     if (output == NULL || rows == NULL) return -1;

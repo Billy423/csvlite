@@ -1,11 +1,12 @@
 /*
  * Implements basic sorting for CSV rows using qsort().
- * Sorting is based on a specific column index.
- * The comparison function uses strcmp() on the cell strings.
- *
+ * Uses a global comparator with the target column + direction
+ * so qsort does not need additional context.
+ * Sorting supports both numeric and text ordering based on content.
+ * 
  * AUTHOR: Vivek Patel
  * DATE: November 17, 2025
- * VERSION: v1.0.0
+ * VERSION: v2.0.0
  */
 
 
@@ -34,9 +35,10 @@ static int g_sort_ascending = 1;  // 1 for ascending, 0 for descending
 static int is_int_str(const char *s) {
     if (!s) return 0;
     if (*s == '+' || *s == '-') s++;
-    // must have at least 1 digit
+    // Must have at least 1 digit
     if (!*s) return 0;
     
+    // Check all characters
     while (*s) {
         if (!isdigit((unsigned char)*s)) return 0;
         s++;
@@ -45,7 +47,7 @@ static int is_int_str(const char *s) {
 }
 
 /* qsort comparator for Row* items.
- *
+ * 
  * PARAMETERS:
  *   a, b - pointers to Row*
  *
@@ -85,7 +87,7 @@ static int rowptr_compare(const void *a, const void *b) {
         result = strcmp(sa, sb);
     }
     
-    // negate result if descending order
+    // Flip direction for descending
     return g_sort_ascending ? result : -result;
 }
 
@@ -109,7 +111,7 @@ Vec *sort_by_column(Vec *rows, int col_index, int ascending) {
     if (len == 0)
         return NULL;
     
-    // single row: create new vector with the row
+    // Single row, create new vector with the row
     if (len == 1) {
         Vec *sorted = vec_new(1);
         if (sorted == NULL) { // allocation failed
@@ -136,11 +138,12 @@ Vec *sort_by_column(Vec *rows, int col_index, int ascending) {
     if (col_index >= row_num_cells(first))
         return NULL;
 
+    // Buffer used by qsort
     Row **tmp = malloc(sizeof(Row *) * len);
-
     if (!tmp)
         return NULL;
 
+    // Copy rows into temp array
     for (size_t i = 0; i < len; i++) {
         Row *current = vec_get(rows, i);
         if (!current) {
@@ -150,11 +153,14 @@ Vec *sort_by_column(Vec *rows, int col_index, int ascending) {
         tmp[i] = current;
     }
 
+    // Comparator configuration
     g_sort_col = col_index;
     g_sort_ascending = ascending;
+    
+    // Preform sorting
     qsort(tmp, len, sizeof(Row *), rowptr_compare);
 
-    /* Build a NEW vector and push sorted pointers */
+    // Build a NEW vector with sorted rows
     Vec *sorted = vec_new(len);
     if (!sorted) {
         free(tmp);

@@ -1,12 +1,12 @@
 /*
  * Implements the group-by functionality for the CSVLite project.
- * This module groups CSV rows by a specified column index. It uses
- * the Lead Developer's hash map (hmap) to track unique column values
- * and returns a vector containing one representative row per group.
- *
+ * Groups rows by a chosen column using a hash map to track which
+ * group keys have already been seen. Produces one representative
+ * row per unique key (the first occurrence).
+ * 
  * AUTHOR: Vivek Patel
  * DATE: November 11, 2025
- * VERSION: v1.0.0
+ * VERSION: v2.0.0
  */
 
 #include "group.h"
@@ -18,8 +18,9 @@
 #include <stdio.h>
 
 
-/* Helper, frees all Row* inside a Vec*, then frees the Vec itself.
- * Used for cleanup on failure inside group_by_column().
+/* Helper cleanup used when any part of grouping fails.
+ * Frees all rows in the output Vec, ensuring no memory leaks.
+ * Used so the function exits safely if something goes wrong.
  */
 static void free_group_results(Vec *grouped) {
     if (!grouped) return;
@@ -58,16 +59,23 @@ Vec* group_by_column(Vec* rows, int col_index)
         return NULL;
     }
 
-    Row *first = vec_get(rows, 0);
-    if (!first) {
-        return NULL;  // first row is NULL (defensive check)
+    // Protect against invalid row 0 since function depends on it
+    if (vec_get(rows, 0) == NULL) {
+        return NULL;
     }
 
+    // Validate index using first row's cell count
+    Row *first = vec_get(rows, 0);
     if (col_index < 0 || col_index >= row_num_cells(first)) {
         return NULL;
     }
 
     size_t n = vec_length(rows);
+
+    // Reject if first row is NULL
+    if (vec_get(rows, 0) == NULL) {
+        return NULL;
+    }
 
     // Hash map tracks which keys we've seen
     HMap *seen = hmap_new(16);
@@ -83,15 +91,17 @@ Vec* group_by_column(Vec* rows, int col_index)
     // Iterate through all rows
     for (size_t i = 0; i < n; i++) {
         Row *row = vec_get(rows, i);
-        if (!row) continue; // skip NULL rows (shouldn't happen, but just in case)
+        // skip NULL rows
+        if (!row) continue; 
 
+        // Key used for grouping
         const char *key = row_get_cell(row, col_index);
         if (!key) key = "";
 
-        // If key not yet recorded → new group
+        // If key not yet recorded, make new key
         if (hmap_get(seen, key) == NULL) {
 
-            // Insert into hashmap
+            // Insert into hashmap, skipping duplicates
             if (hmap_put(seen, key, row) != 0) {
                 free_group_results(grouped);
                 hmap_free(seen);
@@ -107,6 +117,7 @@ Vec* group_by_column(Vec* rows, int col_index)
         }
     }
 
+    // Cleanup
     hmap_free(seen);
     return grouped;
 }

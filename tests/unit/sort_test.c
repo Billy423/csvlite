@@ -1,3 +1,10 @@
+/* Basic unit test for the sort module. 
+
+ * AUTHOR: Vivek Patel
+ * DATE: November 11, 2025
+ * VERSION: v2.0.0
+ */
+
 #include "../../include/sort.h"
 #include "../../include/vec.h"
 #include "../../include/row.h"

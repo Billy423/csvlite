@@ -1,7 +1,12 @@
-/* Basic unit test for the group-by module. Ensures that grouping by
- * a column correctly produces unique groups from duplicate input rows.
- *
- * Vivek Patel, November 11, 2025, v0.0.2
+/* Basic unit test for the group-by module. 
+ * 
+ * Note: 
+ * Coverage is not able to go above 60% since hmap is unable to be NULL
+ * free_group_result() will not be covered since it also is only called when hmap is NULL
+
+ * AUTHOR: Vivek Patel
+ * DATE: November 11, 2025
+ * VERSION: v2.0.0
  */
 
 #include "group.h"
@@ -70,8 +75,8 @@ void test_group_by_column_unique() {
 
     assert(grouped != NULL);
     assert(vec_length(grouped) == 2);
-
-    /// clean up
+    
+    // Clean
     for (size_t i = 0; i < vec_length(rows); i++) {
         row_free(vec_get(rows, i));
     }
@@ -79,6 +84,135 @@ void test_group_by_column_unique() {
     vec_free(grouped);
 
     printf("Test 1: group_by_column() unique groups - Complete\n\n");
+}
+
+// Test 2: rows is empty, return NULL
+void test_group_empty_vector() {
+    Vec *rows = vec_new(0);
+
+    Vec *grouped = group_by_column(rows, 0);
+    assert(grouped == NULL);
+
+    vec_free(rows);
+    printf("Test 2: empty vector handled correctly\n\n");
+}
+
+// Test 3: invalid column index, return NULL
+void test_group_invalid_column() {
+    Vec *rows = vec_new(1);
+    vec_push(rows, make_row("A,B,C"));
+
+    Vec *grouped = group_by_column(rows, 10);
+    assert(grouped == NULL);
+
+    row_free(vec_get(rows, 0));
+    vec_free(rows);
+    printf("Test 3: invalid column handled correctly\n\n");
+}
+
+// Test 4: NULL row inside vector, skip safely
+void test_group_null_row_inside() {
+    Vec *rows = vec_new(3);
+    vec_push(rows, make_row("CS,John"));
+    vec_push(rows, NULL);
+    vec_push(rows, make_row("CS,Alice"));
+
+    Vec *grouped = group_by_column(rows, 0);
+
+    assert(grouped != NULL);
+    assert(vec_length(grouped) == 1);
+
+    // Clean
+    for (size_t i = 0; i < vec_length(rows); i++) {
+        Row *r = vec_get(rows, i);
+        if (r) row_free(r);
+    }
+    vec_free(rows);
+    vec_free(grouped);
+
+    printf("Test 4: NULL row inside handled correctly\n\n");
+}
+
+// Test 5: First row is NULL
+void test_group_null_first_row() {
+    Vec *rows = vec_new(2);
+
+    // Vec_push(NULL) fails, row is NOT added
+    assert(vec_push(rows, NULL) == -1);
+
+    // Only valid row added
+    vec_push(rows, make_row("A,B"));
+
+    // Grouping should succeed with 1 row
+    Vec *grouped = group_by_column(rows, 0);
+    assert(grouped != NULL);
+    assert(vec_length(grouped) == 1);
+
+    // Clean
+    row_free(vec_get(rows, 0));
+    vec_free(rows);
+    vec_free(grouped);
+
+    printf("Test 5: NULL first row handled\n\n");
+}
+
+// Test 6: Internal NULL row
+void test_group_null_middle_row() {
+    Vec *rows = vec_new(3);
+    vec_push(rows, make_row("CS,John"));
+    vec_push(rows, NULL);
+    vec_push(rows, make_row("CS,Alice"));
+
+    Vec *grouped = group_by_column(rows, 0);
+
+    assert(grouped != NULL);
+    assert(vec_length(grouped) == 1);
+
+    // Clean
+    for (size_t i = 0; i < vec_length(rows); i++) {
+        Row *r = vec_get(rows, i);
+        if (r) row_free(r);
+    }
+    vec_free(rows);
+    vec_free(grouped);
+
+    printf("Test 6: Internal NULL row handled\n\n");
+}
+
+// Test 7: Invalid column index
+void test_group_invalid_col_index() {
+    Vec *rows = vec_new(1);
+    vec_push(rows, make_row("A,B"));
+
+    Vec *grouped = group_by_column(rows, 5);
+
+    assert(grouped == NULL);
+
+    row_free(vec_get(rows, 0));
+    vec_free(rows);
+
+    printf("Test 7: Invalid column index handled\n\n");
+}
+
+// Test 8: Group with multiple unique keys
+void test_group_two_keys() {
+    Vec *rows = vec_new(3);
+    vec_push(rows, make_row("A,1"));
+    vec_push(rows, make_row("B,2"));
+    vec_push(rows, make_row("C,3"));
+
+    Vec *grouped = group_by_column(rows, 0);
+    assert(grouped != NULL);
+    assert(vec_length(grouped) == 3);
+
+    for (size_t i = 0; i < vec_length(rows); i++) {
+        row_free(vec_get(rows, i));
+    }
+
+    vec_free(rows);
+    vec_free(grouped);
+
+    printf("Test 8: Multiple unique keys handled correctly\n\n");
 }
 
 /* Entry point for the test program.
@@ -92,10 +226,17 @@ int main() {
     printf("=== Group Unit Tests ===\n\n");
     
     test_group_by_column_unique();
+    test_group_empty_vector();
+    test_group_invalid_column();
+    test_group_null_row_inside();
+    test_group_null_first_row();
+    test_group_null_middle_row();
+    test_group_invalid_col_index();
+    test_group_two_keys();
     
     printf("=== Test Summary ===\n");
-    printf("Tests run: 1\n");
-    printf("Tests passed: 1\n");
+    printf("Tests run: 8\n");
+    printf("Tests passed: 8\n");
     printf("Tests failed: 0\n");
     
     return EXIT_SUCCESS;

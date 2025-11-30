@@ -1,7 +1,11 @@
 #!/bin/bash
-
 # Minimal integration test for CSVLite
 # Tests core functionality end-to-end
+# Usage: csvlite
+# Example: csvlite --file test.csv --select name,age
+# Author: Vivek Patel, Nadeem Mohamed
+# November 23, 2025
+# Version: v2.0.0
 
 # Test data file
 TEST_FILE="test_integration_data.csv"

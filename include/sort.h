@@ -1,7 +1,7 @@
 /*
 * AUTHOR: Vivek Patel
 * DATE: November 17, 2025
-* VERSION: v1.0.0
+* VERSION: v2.0.0
 */
 
 #ifndef SORT_H

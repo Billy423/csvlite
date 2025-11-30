@@ -1,7 +1,7 @@
 /*
 * AUTHOR: Vivek Patel
 * DATE: November 11, 2025
-* VERSION: v1.0.0
+* VERSION: v2.0.0
 */
 
 #ifndef GROUP_H

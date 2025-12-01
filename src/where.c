@@ -24,18 +24,18 @@
 #define OP_GT 5
 #define OP_GE 6
 
+
+
 /*
- *  Function to duplicate the string
- *  If text is NULL, the function returns NULL and does not allocate.
- *  Otherwise, it allocates (strlen(text) + 1) bytes, copies the characters,
- *   and appends a '\0' terminator.
- *
- * parameters:
- *  text: source string to copy (may be NULL).
- *
- * RETURN: a pointer to a newly allocated copy of text on success,
- *         or NULL if text is NULL or allocation fails.
+ * If the text is NUll, this function returns NUll and does not allocate. 
+ * Otherwise, it allcoates bytes, copies the contents and appends a end line character.
+ * 
+ * Parameters:
+ *  text: string to duplicate
+ * 
+ * RETURN: pointer to a newly allcoated duplicate on success or NULL on failure
  */
+
 static char *dupstr(const char *text) {
     if (text == NULL) {
         return NULL;
@@ -54,19 +54,16 @@ static char *dupstr(const char *text) {
     return copy;
 }
 
+
+
 /*
- *  Advances past leading ' ' and '\t' characters by moving the returned
- *   pointer into the original buffer.
- *  Then walks backwards from the end of the string, replacing trailing
- *   spaces/tabs with '\0'.
- *  If the string is all whitespace, the function returns a pointer to
- *   the '\0' terminator inside the original buffer.
- *
- * parameters:
- *  s: modifiable C string buffer to trim (may be NULL).
- *
- * RETURN: pointer to the first non-space/tab character inside s,
- *         or NULL if s is NULL.
+ * Trims whitespaces ' ' '\t' characters by moving the pointer. If the String is all 
+ * whistespace the function returns a pointer to the '\0' terminator
+ * 
+ * Parameters:
+ *  s: input string to trim
+ * 
+ * Returns: Pointer to the first non-whitespace character
  */
 static char *trim_spaces(char *s) {
     if (s == NULL) return NULL;
@@ -86,17 +83,12 @@ static char *trim_spaces(char *s) {
 }
 
 /*
- *  NULL or empty strings are treated as "not a number".
- *  Every character must be between '0' and '9'; any other character
- *   causes failure.
- *
- * Used for numeric column indices like "0", "1", etc.
- *
- * parameters:
- *  text: string to test (may be NULL).
- *
- * RETURN: 1 if text is non-empty and all characters are digits,
- *         0 otherwise.
+ * Checks if the input is a number ('0' to '9').
+ * 
+ * Parameters: 
+ *  text: string to test
+ * 
+ * Returns: 1 if text is non-empty and it is a number or 0 otherwise
  */
 static int is_number(const char *text) {
     if (text == NULL || *text == '\0') return 0;
@@ -111,25 +103,20 @@ static int is_number(const char *text) {
     return 1;
 }
 
+
 /*
- *  Parse a condition string of the form:
- *     <column><op><value>
- *  where <op> is one of: ==, !=, >=, <=, >, <.
- *  Makes a temporary copy of the condition string so it can search and
- *   split it safely.
- *  Searches in order for two-character operators (==, !=, >=, <=) and
- *   then one-character operators (>, <).
- *  Trims spaces/tabs around each part.
- *  Allocates fresh strings for out_col_name and out_value_str; these are
- *   independent of the original condition buffer.
- *
- * parameters:
- *  condition: original condition string from the CLI.
- *  out_col_name: output; set to a newly allocated column token string.
- *  out_value_str: output; set to a newly allocated right-hand-side string.
- *  out_op_type: output; set to one of OP_EQ, OP_NE, OP_LT, OP_LE, OP_GT, OP_GE.
- *
- * RETURN: 0 on success, -1 on failure.
+ * Parses the input condition like "age>=18" into three parts:
+ * - column (age)
+ * - operator (==,!=,...)
+ * - RHS value
+ * 
+ * Parameters: 
+ *  condition: original condition
+ *  out_col_name: output to the newly allcoated column
+ *  out_value_str: output to the newly allocated RHS
+ *  out_op_type: output set to one of OP_EQ, OP_NE, OP_LT, OP_LE, OP_GT, OP_GE
+ * 
+ * Returns: 0 on success
  */
 static int parse_condition(
     const char *condition,
@@ -259,21 +246,20 @@ static int parse_condition(
     return 0;
 }
 
+
+
 /*
- * Given the header row and a column token, find the column index.
- * column_token can be either:
- *     a number: "0", "1", ... (treated as zero-based index), or
- *     a header name: "age", "name", ...
- * For numeric tokens, the function checks that the index is within bounds.
+ * Resolves column token to a column index. For numeric tokens, the function checks 
+ * that the index is within bounds.
  * For name-based tokens, it scans the header row cells and compares each
- *   cell string to column_token using strcmp().
- *
- * parameters:
- * - header: pointer to the header Row (row 0 of the dataset).
- * - column_token: column designator from the condition string.
- *
- * RETURN: column index (>= 0) on success, or -1 if the token is invalid
- *         or the name cannot be found.
+ * cell string to column_token using strcmp().
+ * 
+ * 
+ * Parameters:
+ *  header: ppinter to the header Row
+ *  column_token: column designator from the condition
+ * 
+ * Returns: column index on success
  */
 static int find_column_index(const Row *header, const char *column_token) {
     if (header == NULL || column_token == NULL) return -1;
@@ -301,8 +287,6 @@ static int find_column_index(const Row *header, const char *column_token) {
 
 /*
  * Compare one cell value against the right-hand side of the condition.
- *
- * cell_value and rhs_value are treated as empty strings if NULL.
  * For == and !=, a plain string comparison is used.
  * For <, <=, >, >=, both strings are converted to double 
  *
@@ -311,7 +295,7 @@ static int find_column_index(const Row *header, const char *column_token) {
  *  rhs_value:  right-hand-side constant from the condition.
  *  op_type:    operator type (one of OP_EQ, OP_NE, OP_LT, OP_LE, OP_GT, OP_GE).
  *
- * RETURN: 1 if the condition is satisfied, 0 otherwise.
+ * RETURN: 1 on success
  */
 static int matches_condition(
     const char *cell_value,
@@ -348,32 +332,18 @@ static int matches_condition(
     return 0;
 }
 
+
+
 /*
- *  Filters rows using a single WHERE condition, like "age>=18" or "name==Alice".
- *  The input rows Vec is treated as a table where:
- *  First, the function parses the condition string into:
- *      a column token (index or header name),
- *      an operator type, and
- *      a right-hand-side value.
- *  It then resolves the column token to a column index using the header row.
- *  A new Vec is allocated to store the result. The header row is always
- *   included as the first element in the result.
- *  For each data row, the function pulls the cell in the target column
- *   and checks whether it satisfies the condition using matches_condition().
- *  Matching rows are appended to the result Vec.
- *  The result Vec shares Row* pointers with the original rows; it does not
- *   allocate or copy Row objects.
- *
- * parameters:
- *  rows:      Vec* of Row* representing the full dataset; row 0 is header.
- *  condition: condition string of the form "<column><op><value>" with
- *              operators ==, !=, >=, <=, >, <.
- *
- * RETURN:
- *  A new Vec* containing the header row plus only those data rows that
- *   satisfy the condition, on success.
- *  NULL on failure (invalid condition, column not found, or allocation error).
- *
+ * Applies a single where condition to the table. Parses the condition and then
+ * finds the target column, and returns a new Vec containing the header plus the rows that 
+ * satisfy the conditions.
+ * 
+ * Parameters:
+ *  rows: Vec* of Row* representing the full dataset
+ *  condition: condition to check
+ * 
+ * Returns: A new Vec* containing the header row plus the rows that satisfy the condition
  */
 Vec *where_filter(const Vec *rows, const char *condition) {
     if (rows == NULL || condition == NULL || *condition == '\0') {

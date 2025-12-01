@@ -15,19 +15,17 @@
 #include <string.h>
 
 
+
 /*
- * Behavior details:
- *  If text is NULL, this function returns NULL and does not allocate.
- *  Otherwise, it allocates (strlen(text) + 1) bytes, copies the contents,
- *   and appends a '\0' terminator.
- *  The caller owns the returned buffer and must free() it when done.
- *
- * parameters:
- *  text: source string to duplicate (may be NULL).
- *
- * RETURN: pointer to a newly allocated copy of text on success,
- *         or NULL if text is NULL or memory allocation fails.
+ * If the text is NUll, this function returns NUll and does not allocate. 
+ * Otherwise, it allcoates bytes, copies the contents and appends a end line character.
+ * 
+ * Parameters:
+ *  text: string to duplicate
+ * 
+ * RETURN: pointer to a newly allcoated duplicate on success or NULL on failure
  */
+
 static char *dupstr(const char *text){
     if(text == NULL){
         return NULL;
@@ -48,19 +46,15 @@ static char *dupstr(const char *text){
     return copy;
 }
 
+
 /*
- * Behavior details:
- *  Leading spaces, tabs, and newline-style characters (' ', '\t', '\n', '\r')
- *   are skipped by advancing the returned pointer into the original buffer.
- *  Trailing whitespace is removed in-place by overwriting the last
- *   non-whitespace character with '\0'.
- *  If the string is entirely whitespace, the function returns a pointer
- *   to the '\0' terminator
- *
- * parameters:
- *  s: modifiable C string buffer to trim (may be NULL).
- *
- * RETURN: pointer to the first non-whitespace character inside s.
+ * Trims leading spaces, tabs, and newline characters. Trailing whitespace characters is removed 
+ * in-place. If the entire string is whitespace, the function returns a poitner to the '\0' terminator
+ * 
+ * Parameters: 
+ *  s: string to modify
+ * 
+ * Returns: pointer to the first non-whitespace character
  */
 static char* trim(char *s){
     if(s == NULL){
@@ -81,17 +75,15 @@ static char* trim(char *s){
 }
 
 
-/* 
-* Behavior details:
- *  An empty string or NULL pointer is considered "not a number".
- *  For a non-empty string, the function scans each character and verifies
- *   that it is between '0' and '9'. Any other character causes failure.
- *
- * parameters:
- *  text: string to test (may be NULL).
- *
- * RETURN: 1 if text is non-empty and every character is a digit '0'–'9',
- *         0 otherwise.
+
+
+/*
+ * Checks if the input is a number ('0' to '9').
+ * 
+ * Parameters: 
+ *  text: string to test
+ * 
+ * Returns: 1 if text is non-empty and it is a number or 0 otherwise
  */
 static int is_number(const char *text){
     if(text == NULL || *text == '\0'){
@@ -108,24 +100,18 @@ static int is_number(const char *text){
     return 1;
 }
 
-/* 
- * Behavior details:
- *  Each token is trimmed of leading/trailing whitespace.
- *  If a token is numeric, it is treated as a zero-based index.
- *  If a token is not numeric, it is treated as a column name. 
- *   If lookup fails, parsing fails.
- *  On any error (bad parameters, out-of-range index, missing name, or
- *   allocation failure), this function cleans up and returns -1.
- *  On success, it allocates an int array of size *out_count and fills it with
- *   the parsed indices in order.
- *
- * parameters:
- *  columns_spec: user-supplied string describing columns; must be non-NULL
- *  name_to_index: optional hash map from column names to 
- *  total_cols: total number of columns in the dataset
+
+/*
+ * Performs lookup and allocates an int array of size *out_count and fills it with parsed indices
+ * in order.  
+ * Parameters:
+ *  columns_spec: input string for the columns to lookup
+ *  name_to_index: hasmap from column names
+ *  total_cols: total number of columns
  *  out_indices: output index
- *  out_count:   output count
- * RETURN: 0 on success, or -1
+ *  out_count: output count
+ * 
+ * Returns: 0 on success, or -1
  */
 int select_parse_indices(const char *columns_spec, const HMap *name_to_index, int total_cols, int **out_indices, int *out_count){
     if (columns_spec == NULL || out_indices == NULL || out_count == NULL) {
@@ -198,22 +184,18 @@ int select_parse_indices(const char *columns_spec, const HMap *name_to_index, in
 }
 
 
-/* 
- * Behavior details:
- *  The input rows Vec is treated as a sequence of Row* values.
- *  For each source row, this function creates a new Row with n_indices
- *   columns and copies the selected cells into it in the order specified
- *   by indices[].
- *  If any memory allocation fails or row_set_cell() returns an error, the
- *   function frees all partially created rows, and returns NULL to signal failure.
- *
- * parameters:
- *  rows:      Vec* of Row* representing the full dataset (must be non-NULL).
- *  indices:   array of column indices specifying which columns to keep.
- *  n_indices: number of entries in indices; must be > 0.
- *
- * RETURN: a new Vec* containing newly allocated Row* objects representing
- *         the projected table on success, or NULL on error.
+
+/*
+ * Creates a new set of rows that include only selected columns. It creates a new row 
+ * containing only the columns listed in 'indices' in the same order.
+ * 
+ * Parameters:
+ *  rows: Vec* of Row* representing the entire dataset
+ *  indices: array of column indices that are selected
+ *  n_indices: number of indexes
+ * 
+ *  Returns: A new Vec* containing newly allocated Row* 
+ * 
  */
 Vec *select_project_rows(const Vec *rows, const int *indices, int n_indices){
     if (rows == NULL || indices == NULL || n_indices <= 0){

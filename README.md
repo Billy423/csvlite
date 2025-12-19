@@ -1,9 +1,6 @@
 # CSVlite - Command-Line CSV Analytics Tool
 
-**SFWRENG 2XC3**  
-**Team 21 - MacSQL**  
-**Version: v2.0.0**  
-**Status: COMPLETED (Lab 12.2)**
+**Version: v2.0.1**  
 
 CSVlite is a Linux command-line utility for performing SQL-like operations (select, filter, group-by, sort) on CSV files. Built with C and designed for efficiency.
 
@@ -113,20 +110,14 @@ make coverage          # Generate coverage reports
 
 ## Team Members
 
-| Name | Student Number | GitHub ID | Role Title |
-|------|---------------|-----------|------------|
-| Billy Wu | 400559765 | [Billy423](https://github.com/Billy423) | Lead Developer |
-| Nikhil Ranjith | 400559699 | [nikranjith](https://github.com/nikranjith) | CLI/I/O Owner |
-| Nadeem Mohamed | 400562265 | [Nadeem-Mohamed-Mac](https://github.com/Nadeem-Mohamed-Mac) | Query Operations Team |
-| Vivek Patel | 400562156 | [VivekP-24](https://github.com/VivekP-24) | Query Operations Team |
-
-## Documentation
-
-- **[Development Plan](development_plan.md)** - Complete project planning document with increment details
-- All source files include comprehensive function documentation following consistent style
-- Memory ownership and behavior documented for all functions
+| Name | GitHub ID | Role Title |
+|------|-----------|------------|
+| Billy Wu | [Billy423](https://github.com/Billy423) | Lead Developer |
+| Nikhil Ranjith | [nikranjith](https://github.com/nikranjith) | CLI/I/O Owner |
+| Nadeem Mohamed | [Nadeem-Mohamed-Mac](https://github.com/Nadeem-Mohamed-Mac) | Query Operations Team |
+| Vivek Patel | [VivekP-24](https://github.com/VivekP-24) | Query Operations Team |
 
 ## Version History
 
-- **v2.0.0** (Lab 12.2) - Final release: Comprehensive documentation and code quality improvements
-- **v1.0.0** (Lab 11.2) - Initial release: Core functionality (select, where, group-by, order-by)
+- **v2.0.0** - Final release: Comprehensive documentation and code quality improvements
+- **v1.0.0** - Initial release: Core functionality (select, where, group-by, order-by)
